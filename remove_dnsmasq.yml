@@ -1,0 +1,22 @@
+- hosts: nodes
+  become: yes
+  vars:
+    domain: example.com
+    dns_servers:
+      - 8.8.8.8
+      - 8.8.4.4
+  tasks:
+    - name: stop dnsmasq
+      service:
+        name: dnsmasq
+        state: stopped
+
+    - name: remove dnsmasq
+      yum:
+        name: dnsmasq
+        state: absent
+
+    - name: copy resolv.conf
+      template:
+        src: resolv.conf.j2
+        dest: /etc/resolv.conf
