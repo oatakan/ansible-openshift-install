@@ -10,11 +10,13 @@
       service:
         name: dnsmasq
         state: stopped
+      ignore_errors: yes
 
     - name: remove dnsmasq
       yum:
         name: dnsmasq
         state: absent
+      ignore_errors: yes
 
     - name: copy resolv.conf
       template:
