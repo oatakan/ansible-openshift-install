@@ -1,0 +1,4 @@
+- hosts: masters
+  become: no
+  roles:
+  - ec2-openshift-domain

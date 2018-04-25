@@ -1,0 +1,32 @@
+- name: Set domain prefix
+  set_fact:
+    domain_prefix: "{{ ec2_tag_name.split('-')[0] lower }}"
+
+- debug:
+    var: domain_prefix
+
+- name: Get record for router ELB DNS Entry
+  route53:
+    command: get
+    zone: "{{ hosted_zone_domain_name }}"
+    record: "{{ subdomain | default(ec2_tag_app | lower) }}.{{ domain_prefix }}.{{ hosted_zone_domain_name }}"
+    type: A
+  register: routerelbrec
+  when: hosted_zone_domain_name is defined and domain_prefix is defined
+  delegate_to: localhost
+
+- name: Create Router ELB DNS Entry if it doesn't exist
+  route53:
+    #state: present ## Added in Ansible 2.4 will remove need for when statement below
+    command: create
+    overwrite: yes
+    zone: "{{ hosted_zone_domain_name }}"
+    record: "{{ subdomain | default(ec2_tag_app | lower) }}.{{ domain_prefix }}.{{ hosted_zone_domain_name }}"
+    type: A
+    value: "{{ ec2_ip_address }}"
+  when: routerelbrec.set is defined and "{} == routerelbrec.set"
+  delegate_to: localhost
+
+- name: output url
+  debug:
+    msg: 'application will be available at https://{{ subdomain | default(ec2_tag_app | lower) }}.{{ domain_prefix }}.{{ hosted_zone_domain_name }}/'

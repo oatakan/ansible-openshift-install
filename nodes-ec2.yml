@@ -1,7 +1,7 @@
 ---
 nodes:
   - name: master1
-    role: os-master
+    role: os_master
     app_name: os_cluster1
     instance_type: t2.large
     image: ami-85241def #rhel7
@@ -19,7 +19,7 @@ nodes:
         volume_size: 30
         delete_on_termination: true
   - name: node1
-    role: os-node
+    role: os_node
     app_name: os_cluster1
     instance_type: t2.large
     image: ami-85241def #rhel7
@@ -33,7 +33,7 @@ nodes:
         volume_size: 30
         delete_on_termination: true
   - name: node2
-    role: os-node
+    role: os_node
     app_name: os_cluster1
     instance_type: t2.large
     image: ami-85241def #rhel7
@@ -47,7 +47,7 @@ nodes:
         volume_size: 30
         delete_on_termination: true
   - name: node3
-    role: os-node
+    role: os_node
     app_name: os_cluster1
     instance_type: t2.large
     image: ami-85241def #rhel7
@@ -61,7 +61,7 @@ nodes:
         volume_size: 30
         delete_on_termination: true
   - name: node4
-    role: os-node
+    role: os_node
     app_name: os_cluster1
     instance_type: t2.large
     image: ami-85241def #rhel7
