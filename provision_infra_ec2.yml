@@ -4,3 +4,5 @@
     - nodes-ec2.yml
   roles:
     - ansible-role-ec2
+
+- import_playbook: openshift_domain.yml
