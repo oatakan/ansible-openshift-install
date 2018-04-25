@@ -6,7 +6,7 @@
         region: "{{ ec2_region }}"
         filters:
           vpc-id: "{{ ec2_vpc_id }}"
-          "tag:app": os-demo1
+          "tag:app": os-cluster1
       register: ec2_instances
 
     - name: terminate instances
