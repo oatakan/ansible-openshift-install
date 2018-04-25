@@ -1,4 +1,13 @@
 ---
+- name: configure sudoers
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: '^Defaults.*requiretty'
+    line: 'Defaults    !requiretty'
+    state: present
+    validate: visudo -cf %s
+    backup: no
+
 - name: install packages
   yum:
     name: "{{ item }}"
