@@ -12,7 +12,10 @@
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     state: present
-  ignore_errors: true
+  register: install_epel
+  until: '"error" not in install_epel'
+  retries: 5
+  delay: 10
 
 - name: install packages
   yum:
