@@ -1,0 +1,3 @@
+image_names:
+  rhel-74: RHEL-7.4_HVM_GA-20170808-x86_64-2-Hourly2-GP2
+ec2_region: us-east-1

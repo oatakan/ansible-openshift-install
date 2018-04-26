@@ -4,9 +4,9 @@ nodes:
     role: os_master
     app_name: os_cluster1
     instance_type: t2.large
-    image: ami-85241def #rhel7
+    image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/sda1
+      - device_name: /dev/xvda
         volume_type: gp2
         volume_size: 50
         delete_on_termination: true
@@ -18,9 +18,9 @@ nodes:
     role: os_node
     app_name: os_cluster1
     instance_type: t2.large
-    image: ami-85241def #rhel7
+    image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/sda1
+      - device_name: /dev/xvda
         volume_type: gp2
         volume_size: 50
         delete_on_termination: true
@@ -32,9 +32,9 @@ nodes:
     role: os_node
     app_name: os_cluster1
     instance_type: t2.large
-    image: ami-85241def #rhel7
+    image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/sda1
+      - device_name: /dev/xvda
         volume_type: gp2
         volume_size: 50
         delete_on_termination: true
@@ -46,9 +46,9 @@ nodes:
     role: os_node
     app_name: os_cluster1
     instance_type: t2.large
-    image: ami-85241def #rhel7
+    image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/sda1
+      - device_name: /dev/xvda
         volume_type: gp2
         volume_size: 50
         delete_on_termination: true
@@ -60,9 +60,9 @@ nodes:
     role: os_node
     app_name: os_cluster1
     instance_type: t2.large
-    image: ami-85241def #rhel7
+    image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/sda1
+      - device_name: /dev/xvda
         volume_type: gp2
         volume_size: 50
         delete_on_termination: true
