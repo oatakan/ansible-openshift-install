@@ -13,8 +13,8 @@
       redhat_subscription:
         state: absent
       become: yes
-      delegate_to: "{{ item.instances[0].public_ip_address }}"
-      with_items: "{{ ec2_instances }}"
+      delegate_to: "{{ item.ansible_ssh_host }}"
+      with_items: "{{ ec2_instances.instances }}"
       ignore_errors: yes
 
     - name: terminate instances
