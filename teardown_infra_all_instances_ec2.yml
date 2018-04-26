@@ -9,6 +9,14 @@
           "tag:app": os_cluster1
       register: ec2_instances
 
+    - name: clean rhn registration
+      redhat_subscription:
+        state: absent
+      become: yes
+      delegate_to: "{{ item.instances[0].public_ip_address }}"
+      with_items: "{{ ec2_instances }}"
+      ignore_errors: yes
+
     - name: terminate instances
       ec2:
         region: "{{ ec2_region }}"
