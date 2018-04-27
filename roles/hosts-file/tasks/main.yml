@@ -10,7 +10,7 @@
   when: set_hostname is defined and set_hostname
 
 - debug:
-   var: item
+   msg: "{{ hostvars[item] }}"
   with_items: "{{ play_hosts }}"
 
 - name: build hosts file
