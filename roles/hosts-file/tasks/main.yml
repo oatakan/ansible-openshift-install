@@ -9,10 +9,6 @@
     name: "{{ inventory_hostname }}"
   when: set_hostname is defined and set_hostname
 
-- debug:
-   msg: "{{ hostvars[item].ec2_private_dns_name }}"
-  with_items: "{{ play_hosts }}"
-
 - name: build hosts file
   lineinfile:
     dest: /etc/hosts
