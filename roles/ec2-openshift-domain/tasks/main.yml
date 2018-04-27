@@ -9,7 +9,7 @@
   route53:
     command: get
     zone: "{{ hosted_zone_domain_name }}"
-    record: "{{ subdomain | default(ec2_tag_app | lower) }}.{{ domain_prefix }}.{{ hosted_zone_domain_name }}"
+    record: "*.{{ subdomain | default(ec2_tag_app | lower) }}.{{ domain_prefix }}.{{ hosted_zone_domain_name }}"
     type: A
   register: routerelbrec
   when: hosted_zone_domain_name is defined and domain_prefix is defined
@@ -21,7 +21,7 @@
     command: create
     overwrite: yes
     zone: "{{ hosted_zone_domain_name }}"
-    record: "{{ subdomain | default(ec2_tag_app | lower) }}.{{ domain_prefix }}.{{ hosted_zone_domain_name }}"
+    record: "*.{{ subdomain | default(ec2_tag_app | lower) }}.{{ domain_prefix }}.{{ hosted_zone_domain_name }}"
     type: A
     value: "{{ ec2_ip_address }}"
   when: routerelbrec.set is defined and "{} == routerelbrec.set"
