@@ -10,7 +10,7 @@
   when: set_hostname is defined and set_hostname
 
 - debug:
-   msg: "{{ hostvars[item].ansible_facts }}"
+   msg: "{{ hostvars[item].ec2_private_dns_name }}"
   with_items: "{{ play_hosts }}"
 
 - name: build hosts file
@@ -19,7 +19,7 @@
     regexp: '.*{{ item }}$'
     line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}"
     state: present
-  when: hostvars[item].ansible_default_ipv4.address is defined and hostvars[item].ansible_facts.ec2_private_dns_name is not defined
+  when: hostvars[item].ansible_default_ipv4.address is defined and hostvars[item].ec2_private_dns_name is not defined
   with_items: "{{ play_hosts }}"
 
 - name: build hosts file
@@ -28,5 +28,5 @@
     regexp: '.*{{ item }}$'
     line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ item.ansible_facts.ec2_private_dns_name }}"
     state: present
-  when: hostvars[item].ansible_default_ipv4.address is defined and hostvars[item].ansible_facts.ec2_private_dns_name is defined
+  when: hostvars[item].ansible_default_ipv4.address is defined and hostvars[item].ec2_private_dns_name is defined
   with_items: "{{ play_hosts }}"
