@@ -7,7 +7,7 @@
 - name: set hostname to inventory name
   hostname:
     name: "{{ inventory_hostname }}"
-  when: set_hostname is defined and set_hostname == yes
+  when: set_hostname is defined and set_hostname
 
 - name: build hosts file
   lineinfile:
