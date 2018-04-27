@@ -29,6 +29,7 @@
   - bridge-utils
   - NetworkManager
   - ntp
+  - dnsmasq
   ignore_errors: true
 
 - name: install packages atomic
@@ -71,6 +72,7 @@
   with_items:
   - ntpd
   - NetworkManager
+  - dnsmasq
 
 - name: Reboot server
   shell: "sleep 3; /usr/sbin/shutdown -r now"
