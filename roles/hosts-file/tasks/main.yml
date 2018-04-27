@@ -9,6 +9,10 @@
     name: "{{ inventory_hostname }}"
   when: set_hostname is defined and set_hostname
 
+- debug:
+   var: item
+  with_items: "{{ play_hosts }}"
+
 - name: build hosts file
   lineinfile:
     dest: /etc/hosts
