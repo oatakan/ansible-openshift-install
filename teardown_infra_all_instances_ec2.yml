@@ -33,7 +33,7 @@
       when: hosted_zone_domain_name is defined and ec2_name_prefix is defined
       ignore_errors: yes
 
-    - name: Delete Router ELB DNS Entry if it doesn't exist
+    - name: Delete Router ELB DNS Entry if it exists
       route53:
         #state: present ## Added in Ansible 2.4 will remove need for when statement below
         command: delete
