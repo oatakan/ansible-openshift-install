@@ -29,7 +29,7 @@
   - bridge-utils
   - NetworkManager
   - ntp
-  - dnsmasq
+#  - dnsmasq
   ignore_errors: true
 
 - name: install packages atomic
@@ -72,7 +72,7 @@
   with_items:
   - ntpd
   - NetworkManager
-  - dnsmasq
+#  - dnsmasq
 
 - name: Reboot server
   shell: "sleep 3; /usr/sbin/shutdown -r now"
@@ -154,12 +154,12 @@
   - Start Docker
 
 # see https://bugzilla.redhat.com/show_bug.cgi?id=1550582
-- name: restart dbus and dnsmasq
-  service:
-    name: "{{ item }}"
-    state: restarted
-  with_items:
-  - dbus
-  - dnsmasq
+#- name: restart dbus and dnsmasq
+#  service:
+#    name: "{{ item }}"
+#    state: restarted
+#  with_items:
+#  - dbus
+#  - dnsmasq
 
 
