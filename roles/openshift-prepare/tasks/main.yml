@@ -153,4 +153,13 @@
   - Clean Docker Data
   - Start Docker
 
+# see https://bugzilla.redhat.com/show_bug.cgi?id=1550582
+- name: restart dbus and dnsmasq
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+  - dbus
+  - dnsmasq
+
 

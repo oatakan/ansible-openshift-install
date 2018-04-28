@@ -1,9 +1,14 @@
 ---
 - name: Stop Docker
-  service: name=docker state=stopped
+  service:
+    name: docker
+    state: stopped
 
 - name: Clean Docker Data
   command: rm -rf /var/lib/docker/*
 
 - name: Start Docker
-  service: name=docker state=started enabled=yes
+  service:
+    name: docker
+    state: started
+    enabled: yes
