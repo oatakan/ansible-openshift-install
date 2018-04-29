@@ -1,6 +1,6 @@
 - name: find ami for rhel7
   ec2_ami_find:
-    name: "{{ image_names['rhel-75'] }}"
+    name: "{{ image_names['centos-7'] }}"
     region: "{{ ec2_region }}"
   register: rhel7_ami_find
 
