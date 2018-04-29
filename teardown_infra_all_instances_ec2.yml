@@ -1,12 +1,17 @@
 - hosts: localhost
   become: no
+  vars:
+    osp_cluster_name: oscluster1
   tasks:
+    - debug:
+        var: osp_cluster_name
+
     - name: get ec2 instance information
       ec2_remote_facts:
         region: "{{ ec2_region }}"
         filters:
           vpc-id: "{{ ec2_vpc_id }}"
-          "tag:app": oscluster1
+          "tag:app": "{{ osp_cluster_name | default('oscluster1') }}"
       register: ec2_instances
 
     - name: clean rhn registration

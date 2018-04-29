@@ -1,5 +1,7 @@
 - hosts: localhost
   become: no
+  vars:
+    osp_cluster_name: oscluster1
   vars_files:
     - nodes-ec2.yml
   roles:
