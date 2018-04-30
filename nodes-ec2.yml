@@ -3,6 +3,7 @@ nodes:
   - name: master1
     role: os_master
     app_name: "{{ osp_cluster_name | default('oscluster1') }}"
+    pod_name: "{{ osp_cluster_name | default('oscluster1') }}"
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
@@ -17,6 +18,7 @@ nodes:
   - name: node1
     role: os_node
     app_name: "{{ osp_cluster_name | default('oscluster1') }}"
+    pod_name: "{{ osp_cluster_name | default('oscluster1') }}"
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
@@ -31,6 +33,7 @@ nodes:
   - name: node2
     role: os_node
     app_name: "{{ osp_cluster_name | default('oscluster1') }}"
+    pod_name: "{{ osp_cluster_name | default('oscluster1') }}"
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
@@ -45,6 +48,7 @@ nodes:
   - name: node3
     role: os_node
     app_name: "{{ osp_cluster_name | default('oscluster1') }}"
+    pod_name: "{{ osp_cluster_name | default('oscluster1') }}"
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
@@ -59,6 +63,7 @@ nodes:
   - name: node4
     role: os_node
     app_name: "{{ osp_cluster_name | default('oscluster1') }}"
+    pod_name: "{{ osp_cluster_name | default('oscluster1') }}"
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
