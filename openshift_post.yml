@@ -33,3 +33,29 @@
       command: htpasswd -c -b /etc/origin/master/htpasswd {{ lookup('env','K8S_AUTH_USERNAME') }} {{ lookup('env','K8S_AUTH_PASSWORD') }}
       when: master_config | success
       tag: add_user
+
+# This is needed for Promethous to pull node exporter metrics at http://localhost:9100/metrics from all nodes
+# This is not done as of OpenShift 3.9
+- hosts: nodes
+  become: yes
+  tasks:
+    - name: open destination port tcp/9100
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        ctstate: NEW,ESTABLISHED
+        jump: ACCEPT
+        destination_port: 9100
+        protocol: tcp
+        match: conntrack
+
+    - name: open source port tcp/9100
+      iptables:
+        chain: OS_FIREWALL_ALLOW
+        ctstate: NEW,ESTABLISHED
+        jump: ACCEPT
+        source_port: 9100
+        protocol: tcp
+        match: conntrack
+
+    - name: save iptables rules
+      command: service iptables save
