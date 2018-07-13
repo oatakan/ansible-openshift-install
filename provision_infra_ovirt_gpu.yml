@@ -1,0 +1,6 @@
+- hosts: localhost
+  become: no
+  vars_files:
+    - nodes-ovirt-gpu.yml
+  roles:
+    - ansible-role-ovirt
