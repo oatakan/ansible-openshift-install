@@ -1,5 +1,8 @@
-- hosts: localhost
+- name: deploy cluster on ovirt with gpu
+  hosts: localhost
   become: no
+  gather_facts: no
+  connection: local
   vars_files:
     - nodes-ovirt-gpu.yml
   roles:
