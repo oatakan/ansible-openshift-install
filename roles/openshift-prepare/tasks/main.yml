@@ -1,4 +1,9 @@
 ---
+- name: disable cloud-init
+  file:
+    path: /etc/cloud/cloud-init.disabled
+    state: touch
+
 - name: configure sudoers
   lineinfile:
     dest: /etc/sudoers
