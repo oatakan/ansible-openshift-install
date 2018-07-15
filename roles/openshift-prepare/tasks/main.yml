@@ -3,6 +3,7 @@
   file:
     path: /etc/cloud/cloud-init.disabled
     state: touch
+  ignore_errors: yes
 
 - name: configure sudoers
   lineinfile:
