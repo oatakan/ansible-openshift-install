@@ -28,7 +28,7 @@ nodes:
     cpu: 2
     user_name: root
     root_password: object00
-    template: rhel75-x64-100gb
+    template: centos75-x64-100gb
   - name: osgnode1
     networks:
     - name: ovirtmgmt
@@ -54,4 +54,4 @@ nodes:
     cpu: 2
     user_name: root
     root_password: object00
-    template: rhel75-x64-100gb-gpu
+    template: centos75-x64-100gb-gpu
