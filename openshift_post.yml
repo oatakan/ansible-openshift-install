@@ -34,11 +34,18 @@
       when: master_config | success
       tag: add_user
 
-# This is needed for Promethous to pull node exporter metrics at http://localhost:9100/metrics from all nodes
-# This is not done as of OpenShift 3.9
 - hosts: nodes
   become: yes
   tasks:
+    # this is needed to prevent upstream dns to answer for default.svc
+    # resolution needs to be local
+    - name: add default.svc.cluster.local to dnsmasq configuration file
+      lineinfile:
+        path: /etc/dnsmasq.d/node-dnsmasq.conf
+        line: 'server=/default.svc.cluster.local/127.0.0.1'
+
+    # This is needed for Promethous to pull node exporter metrics at http://localhost:9100/metrics from all nodes
+    # This is not done as of OpenShift 3.9
     - name: open destination port tcp/9100
       iptables:
         chain: OS_FIREWALL_ALLOW
