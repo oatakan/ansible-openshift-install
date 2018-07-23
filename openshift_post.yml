@@ -44,7 +44,7 @@
         path: /etc/dnsmasq.d/node-dnsmasq.conf
         line: 'server=/default.svc.cluster.local/127.0.0.1'
 
-    # This is needed for Promethous to pull node exporter metrics at http://localhost:9100/metrics from all nodes
+    # This is needed for Prometheus to pull node exporter metrics at http://localhost:9100/metrics from all nodes
     # This is not done as of OpenShift 3.9
     - name: open destination port tcp/9100
       iptables:
