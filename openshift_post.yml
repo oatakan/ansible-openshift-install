@@ -42,6 +42,7 @@
     - name: add default.svc.cluster.local to dnsmasq configuration file
       lineinfile:
         path: '{{ item }}'
+        insertbefore: '^server=/cluster.local*'
         line: 'server=/default.svc.cluster.local/127.0.0.1'
       with_items:
         - /etc/dnsmasq.d/node-dnsmasq.conf
