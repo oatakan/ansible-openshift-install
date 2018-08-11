@@ -3,7 +3,7 @@ providers:
   vcenter:
     datacenter: cloud
     cluster: mylab
-    resource_pool: manageto
+    resource_pool: management
 
 nodes:
   - name: osmaster1
