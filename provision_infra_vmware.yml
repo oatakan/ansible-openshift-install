@@ -1,0 +1,9 @@
+- name: deploy cluster on vmware
+  hosts: localhost
+  become: no
+  gather_facts: no
+  connection: local
+  vars_files:
+    - nodes-vmware.yml
+  roles:
+    - ansible-role-vmware
