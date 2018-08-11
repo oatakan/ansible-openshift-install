@@ -7,3 +7,5 @@
     - nodes-vmware.yml
   roles:
     - ansible-role-vmware
+  post_tasks:
+    - pause:
