@@ -102,6 +102,7 @@
 
 - name: unexclude atomic-openshift package for the duration of the install
   command: atomic-openshift-excluder unexclude
+  ignore_errors: true
   when: ansible_distribution == 'RedHat'
 
 - name: install Docker
