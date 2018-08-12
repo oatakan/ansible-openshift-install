@@ -3,4 +3,5 @@
   roles:
   - hosts-file
   - ansible-role-rhn
+  - ansible-role-rhel-upgrade
   - openshift-prepare
