@@ -47,6 +47,7 @@
       with_items:
         - /etc/dnsmasq.d/node-dnsmasq.conf
         - /etc/origin/node/node-dnsmasq.conf
+      ignore_errors: yes
 
     # This is needed for Prometheus to pull node exporter metrics at http://localhost:9100/metrics from all nodes
     # This is not done as of OpenShift 3.9
@@ -58,6 +59,9 @@
         destination_port: 9100
         protocol: tcp
         match: conntrack
+      when:
+        - os_firewall_use_firewalld is not defined
+        - not os_firewall_use_firewalld
 
     - name: open source port tcp/9100
       iptables:
@@ -67,6 +71,13 @@
         source_port: 9100
         protocol: tcp
         match: conntrack
+      when:
+        - os_firewall_use_firewalld is not defined
+        - not os_firewall_use_firewalld
+
 
     - name: save iptables rules
       command: service iptables save
+      when:
+        - os_firewall_use_firewalld is not defined
+        - not os_firewall_use_firewalld
