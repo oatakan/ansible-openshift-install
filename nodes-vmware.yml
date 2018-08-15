@@ -23,7 +23,7 @@ nodes:
       - 8.8.4.4
     memory: 16384
     cpu: 2
-    template: rhel74-x64-bigdisk
+    template: rhel75-x64-bigdisk_v2
     snapshot_src: Linked
     linked_clone: True
   - name: osnode1
@@ -43,6 +43,6 @@ nodes:
       - 8.8.4.4
     memory: 8192
     cpu: 2
-    template: rhel74-x64-bigdisk
+    template: rhel75-x64-bigdisk_v2
     snapshot_src: Linked
     linked_clone: True
