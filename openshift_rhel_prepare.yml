@@ -4,5 +4,5 @@
   - hosts-file
   - ansible-role-rhn
   - role: ansible-role-rhel-upgrade
-    upgrade_reboot_kernel: yes
+    upgrade_reboot_kernel: no
   - openshift-prepare
