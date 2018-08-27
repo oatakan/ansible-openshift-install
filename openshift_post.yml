@@ -75,7 +75,6 @@
         - os_firewall_use_firewalld is not defined
         - not os_firewall_use_firewalld
 
-
     - name: save iptables rules
       command: service iptables save
       when:
