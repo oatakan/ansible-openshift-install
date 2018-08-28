@@ -11,7 +11,7 @@ nodes:
       gateway: 192.168.1.254
       domain: home.ad
       dns_servers:
-      - 192.168.1.254
+      - 8.8.8.8
       - 8.8.4.4
     disks:
     - name: docker
@@ -28,7 +28,7 @@ nodes:
       storage_domain: pele-Local2
     domain: home.ad
     dns_servers:
-    - 192.168.1.254
+    - 8.8.8.8
     - 8.8.4.4
     memory: 8192
     cpu: 2
@@ -43,7 +43,7 @@ nodes:
       gateway: 192.168.1.254
       domain: home.ad
       dns_servers:
-      - 192.168.1.254
+      - 8.8.8.8
       - 8.8.4.4
     disks:
     - name: docker
@@ -54,7 +54,7 @@ nodes:
       storage_domain: pele-Local
     domain: home.ad
     dns_servers:
-    - 192.168.1.254
+    - 8.8.8.8
     - 8.8.4.4
     memory: 8192
     cpu: 4
