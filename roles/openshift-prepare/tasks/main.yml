@@ -166,7 +166,7 @@
 - name: Docker Storage Setup
   command: docker-storage-setup
   register: dockerStorageSetupComplete
-  when: dockerpoolLVS.stdout != "docker-pool" and dockerStorageConfigFileCreated|success and docker_storage_mount in ansible_devices
+  when: dockerpoolLVS.stdout != "docker-pool" and dockerStorageConfigFileCreated is success and docker_storage_mount in ansible_devices
   notify:
   - Stop Docker
   - Clean Docker Data
