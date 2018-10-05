@@ -32,7 +32,6 @@
     - name: add user
       command: htpasswd -c -b /etc/origin/master/htpasswd {{ lookup('env','K8S_AUTH_USERNAME') }} {{ lookup('env','K8S_AUTH_PASSWORD') }}
       when: master_config | success
-      tag: add_user
 
 - hosts: nodes
   become: yes
