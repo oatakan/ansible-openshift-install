@@ -14,16 +14,16 @@ nodes:
       gateway: 192.168.1.254
       domain: home.ad
       dns_servers:
-      - 192.168.1.254
+      - 8.8.8.8
       - 8.8.4.4
     customization:
       domain: home.ad
       dns_servers:
-      - 192.168.1.254
+      - 8.8.8.8
       - 8.8.4.4
     memory: 16384
     cpu: 2
-    template: rhel74-x64-bigdisk
+    template: rhel75-x64-bigdisk
     snapshot_src: Linked
     linked_clone: True
   - name: osnode1
@@ -34,15 +34,15 @@ nodes:
       gateway: 192.168.1.254
       domain: home.ad
       dns_servers:
-      - 192.168.1.254
+      - 8.8.8.8
       - 8.8.4.4
     customization:
       domain: home.ad
       dns_servers:
-      - 192.168.1.254
+      - 8.8.8.8
       - 8.8.4.4
     memory: 8192
     cpu: 2
-    template: rhel74-x64-bigdisk
+    template: rhel75-x64-bigdisk
     snapshot_src: Linked
     linked_clone: True
