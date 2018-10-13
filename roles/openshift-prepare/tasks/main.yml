@@ -65,11 +65,10 @@
 
 - name: pip upgrade setuptools and pip
   pip:
-    name: "{{ item }}"
+    name:
+      - pip
+      - setuptools
     state: latest
-  with_items:
-  - pip
-  - setuptools
 
 - name: enable selinux
   selinux:
