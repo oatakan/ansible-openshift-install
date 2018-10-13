@@ -25,17 +25,15 @@
 
 - name: install packages
   yum:
-    name: "{{ item }}"
+    name:
+      - PyYAML
+      - python-devel
+      - openssl-devel
+      - iptables-services
+      - bridge-utils
+      - NetworkManager
+      - ntp
     state: latest
-  with_items:
-  - PyYAML
-  - python-devel
-  - openssl-devel
-  - iptables-services
-  - bridge-utils
-  - NetworkManager
-  - ntp
-#  - dnsmasq
   ignore_errors: true
 
 # this should be temporary fix
@@ -52,21 +50,18 @@
 
 - name: install packages atomic
   yum:
-    name: "{{ item }}"
+    name:
+      - atomic-openshift-utils
+      - atomic-openshift-excluder
+      - atomic-openshift-docker-excluder
     state: latest
-  with_items:
-  - atomic-openshift-utils
-  - atomic-openshift-excluder
-  - atomic-openshift-docker-excluder
   ignore_errors: true
   when: ansible_distribution == 'RedHat'
 
 - name: install more packages
   yum:
-    name: "{{ item }}"
+    name: python-pip
     state: latest
-  with_items:
-  - python-pip
 
 - name: pip upgrade setuptools and pip
   pip:
