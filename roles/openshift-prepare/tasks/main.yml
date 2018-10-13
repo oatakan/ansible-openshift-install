@@ -5,6 +5,16 @@
     state: touch
   ignore_errors: yes
 
+- name: change dns servers
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+  when:
+    - change_dns_servers
+    - domain is defined
+    - dns_servers is defined
+    - dns_servers|length > 0
+
 - name: configure sudoers
   lineinfile:
     dest: /etc/sudoers
