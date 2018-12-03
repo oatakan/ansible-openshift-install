@@ -59,6 +59,18 @@
     - openshift_deployment_type == 'origin'
   ignore_errors: yes
 
+    # this should be temporary fix
+    - name: install python-docker
+      yum:
+        name: docker-python
+        state: present
+      when:
+        - openshift_version is defined
+        - openshift_deployment_type is defined
+        - openshift_version == '3.11'
+        - openshift_deployment_type == 'origin'
+      ignore_errors: yes
+
 - name: install packages atomic
   yum:
     name:

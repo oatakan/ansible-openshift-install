@@ -1,17 +1,5 @@
 - hosts: all:!new_nodes:!parking
   become: yes
-  pre_tasks:
-    # this should be temporary fix
-    - name: install python-docker
-      yum:
-        name: python-docker
-        state: present
-      when:
-        - openshift_version is defined
-        - openshift_deployment_type is defined
-        - openshift_version == '3.11'
-        - openshift_deployment_type == 'origin'
-      ignore_errors: yes
   roles:
   - hosts-file
   - ansible-role-rhn
