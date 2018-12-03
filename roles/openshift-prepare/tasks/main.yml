@@ -1,4 +1,17 @@
 ---
+
+# this should be temporary fix
+- name: install python-docker
+  yum:
+    name: python-docker
+    state: present
+  when:
+    - openshift_version is defined
+    - openshift_deployment_type is defined
+    - openshift_version == '3.11'
+    - openshift_deployment_type == 'origin'
+  ignore_errors: yes
+
 - name: disable cloud-init
   file:
     path: /etc/cloud/cloud-init.disabled
@@ -55,18 +68,6 @@
     - openshift_version is defined
     - openshift_deployment_type is defined
     - openshift_version == '3.10'
-    - openshift_deployment_type == 'origin'
-  ignore_errors: yes
-
-# this should be temporary fix
-- name: install python-docker
-  yum:
-    name: python-docker
-    state: present
-  when:
-    - openshift_version is defined
-    - openshift_deployment_type is defined
-    - openshift_version == '3.11'
     - openshift_deployment_type == 'origin'
   ignore_errors: yes
 
