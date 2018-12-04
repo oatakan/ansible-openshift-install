@@ -44,6 +44,12 @@
       - bridge-utils
       - NetworkManager
       - ntp
+      - net-tools
+      - bind-utils
+      - bash-completion
+      - kexec-tools
+      - sos
+      - psacct
     state: latest
   ignore_errors: true
 
@@ -135,13 +141,22 @@
   when: ansible_distribution == 'RedHat'
 
 - name: install Docker
-  yum: name=docker state=installed update_cache=yes
+  yum:
+    name: docker
+    state: installed
+    update_cache: yes
   register: dockerInstalled
   notify:
   - Start Docker
 
 - name: Insecure Registry Config
-  lineinfile: dest=/etc/sysconfig/docker  regexp="^OPTIONS" line=OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16 --log-opt max-size=1M --log-opt max-file=3' backup=yes backrefs=yes state=present
+  lineinfile:
+    dest: /etc/sysconfig/docker
+    regexp: "^OPTIONS"
+    line: OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16 --log-opt max-size=1M --log-opt max-file=3'
+    backup: yes
+    backrefs: yes
+    state: present
   register: dockerConfigUpdated
 
 - name: Create Docker Storage Config
@@ -162,7 +177,9 @@
   register: dockerpoolLVS
 
 - name: Read device information
-  parted: device=/dev/{{ docker_storage_mount }} unit=MiB
+  parted:
+    device: /dev/{{ docker_storage_mount }}
+    unit: MiB
   register: sd_info
   when: docker_storage_mount is defined and docker_storage_wipe is defined and docker_storage_wipe
 
