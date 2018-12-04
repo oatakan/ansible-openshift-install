@@ -1,0 +1,11 @@
+- name: undeploy cluster on ovirt with gpu
+  hosts: localhost
+  become: no
+  gather_facts: no
+  connection: local
+  vars_files:
+    - node-config/nodes-hybrid-vmware-ovirt-gpu.yml
+  roles:
+    - role: ansible-role-ovirt
+      role_action: deprovision
+      nodes: "{{ ovirt.nodes }}"
