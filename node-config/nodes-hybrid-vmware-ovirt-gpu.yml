@@ -1,0 +1,60 @@
+---
+providers:
+  vcenter:
+    datacenter: cloud
+    cluster: mylab
+    resource_pool: management
+  ovirt:
+    cluster: pele-Local
+
+vmware:
+  nodes:
+    - name: osgmaster1
+      networks:
+      - name: mgmt
+        ip: 192.168.1.65
+        netmask: 255.255.255.0
+        gateway: 192.168.1.254
+        domain: home.ad
+        dns_servers:
+        - 8.8.8.8
+        - 8.8.4.4
+      customization:
+        domain: home.ad
+        dns_servers:
+        - 8.8.8.8
+        - 8.8.4.4
+      memory: 8192
+      cpu: 2
+      template: rhel75-x64-bigdisk_v3
+      snapshot_src: Linked
+      linked_clone: True
+
+ovirt:
+  nodes:
+    - name: osgnode1
+      networks:
+        - name: ovirtmgmt
+          ip: 192.168.1.66
+          netmask: 255.255.255.0
+          gateway: 192.168.1.254
+          domain: home.ad
+          dns_servers:
+            - 8.8.8.8
+            - 8.8.4.4
+      disks:
+        - name: docker
+          size: 40GiB
+          format: cow
+          interface: virtio
+          bootable: no
+          storage_domain: pele-Local
+      domain: home.ad
+      dns_servers:
+        - 8.8.8.8
+        - 8.8.4.4
+      memory: 16384
+      cpu: 4
+      user_name: root
+      root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
+      template: rhel75-x64-100gb-gpu

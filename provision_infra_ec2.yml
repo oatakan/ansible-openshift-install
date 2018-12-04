@@ -3,7 +3,7 @@
   vars:
     osp_cluster_name: oscluster1
   vars_files:
-    - nodes-ec2.yml
+    - node-config/nodes-ec2.yml
   roles:
     - ec2-find-amis
     - ansible-role-ec2

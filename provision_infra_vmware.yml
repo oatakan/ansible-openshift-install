@@ -4,6 +4,6 @@
   gather_facts: no
   connection: local
   vars_files:
-    - nodes-vmware.yml
+    - node-config/nodes-vmware.yml
   roles:
     - ansible-role-vmware

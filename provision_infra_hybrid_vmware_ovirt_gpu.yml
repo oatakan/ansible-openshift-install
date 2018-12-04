@@ -1,0 +1,13 @@
+- name: deploy cluster on vmware and ovirt with gpu
+  hosts: localhost
+  become: no
+  gather_facts: no
+  connection: local
+  strategy: free
+  vars_files:
+    - node-config/nodes-hybrid-vmware-ovirt-gpu.yml
+  roles:
+    - role: ansible-role-vmware
+      nodes: "{{ vmware.nodes }}"
+    - role: ansible-role-ovirt
+      nodes: "{{ ovirt.nodes }}"
