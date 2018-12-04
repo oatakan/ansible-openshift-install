@@ -24,6 +24,7 @@ vmware:
         dns_servers:
         - 8.8.8.8
         - 8.8.4.4
+        password: "{{ ansible_password | default(ansible_ssh_password) }}"
       memory: 8192
       cpu: 2
       template: rhel75-x64-bigdisk_v3
