@@ -24,9 +24,11 @@ vmware:
         dns_servers:
         - 8.8.8.8
         - 8.8.4.4
+        runonce:
+          - echo "{{ ansible_password | default(ansible_ssh_password) }}" | passwd --stdin root
       memory: 8192
       cpu: 2
-      template: rhel75-x64-bigdisk_v3
+      template: rhel75-x64-bigdisk_v3_debug
       snapshot_src: Linked
       linked_clone: True
 
