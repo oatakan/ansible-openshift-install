@@ -33,7 +33,7 @@ nodes:
     memory: 8192
     cpu: 2
     user_name: root
-    root_password: object00
+    root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
     template: rhel75-x64-100gb
   - name: osgnode1
     networks:
@@ -59,5 +59,5 @@ nodes:
     memory: 16384
     cpu: 4
     user_name: root
-    root_password: object00
+    root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
     template: rhel75-x64-100gb-gpu
