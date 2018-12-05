@@ -53,8 +53,7 @@ ovirt:
       dns_servers:
         - 8.8.8.8
         - 8.8.4.4
-      memory: 30720
-      memory_max: 30720
+      memory: 28672
       cpu: 4
       user_name: root
       root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
