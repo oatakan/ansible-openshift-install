@@ -140,9 +140,21 @@
   ignore_errors: true
   when: ansible_distribution == 'RedHat'
 
+#- name: install Docker
+#  yum:
+#    name: docker
+#    state: installed
+#    update_cache: yes
+#  register: dockerInstalled
+#  notify:
+#  - Start Docker
+
+# see https://github.com/openshift/origin/issues/21590
+# yum downgrade docker-1.13.1-75.git8633870.el7_5.x86_64 docker-client-1.13.1-75.git8633870.el7_5.x86_64 docker-common-1.13.1-75.git8633870.el7_5.x86_64 docker-rhel-push-plugin-1.13.1-75.git8633870.el7_5.x86_64
+
 - name: install Docker
   yum:
-    name: docker
+    name: docker-1.13.1-75.git8633870.el7_5.x86_64
     state: installed
     update_cache: yes
   register: dockerInstalled
