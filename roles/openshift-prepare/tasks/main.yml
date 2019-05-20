@@ -11,7 +11,7 @@
     src: resolv.conf.j2
     dest: /etc/resolv.conf
   when:
-    - change_dns_servers
+    - change_dns_servers|bool
     - domain is defined
     - dns_servers is defined
     - dns_servers|length > 0
