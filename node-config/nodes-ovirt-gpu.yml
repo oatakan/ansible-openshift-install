@@ -4,6 +4,8 @@ providers:
     cluster: pele-Local
 nodes:
   - name: osgmaster1
+    role: master
+    app_name: os_cluster_gpu
     networks:
     - name: ovirtmgmt
       ip: 192.168.1.65
@@ -39,6 +41,8 @@ nodes:
     root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
     template: rhel-server-7.6-x86_64
   - name: osgnode1
+    role: node
+    app_name: os_cluster_gpu
     networks:
     - name: ovirtmgmt
       ip: 192.168.1.66
