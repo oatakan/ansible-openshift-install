@@ -60,4 +60,7 @@ nodes:
     cpu: 4
     user_name: root
     root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
+    custom_properties:
+      - name: qemu_cmdline
+        value: '["-enable-kvm","-cpu","host,kvm=off,hv_time,hv_relaxed,hv_vapic,hv_synic,hv_stimer,hv_spinlocks=0x1fff,hv_vendor_id=Nvidia43FIX","-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
     template: rhel75-x64-100gb-gpu
