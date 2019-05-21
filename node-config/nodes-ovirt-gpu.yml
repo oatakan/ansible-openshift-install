@@ -68,6 +68,8 @@ nodes:
     root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
     graphical_console:
       headless_mode: yes
+      protocol: spice
+    placement_policy: pinned
     host_devices:
       - name: pci_0000_00_01_0
       - name: pci_0000_00_14_0
