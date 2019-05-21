@@ -73,7 +73,6 @@ nodes:
     cpu_mode: host_passthrough
     host: pele
     host_devices:
-      - name: pci_0000_00_01_0
       - name: pci_0000_00_14_0
       - name: pci_0000_01_00_0
       - name: pci_0000_01_00_1
