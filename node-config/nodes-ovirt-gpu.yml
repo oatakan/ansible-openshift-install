@@ -49,9 +49,6 @@ nodes:
       - 8.8.8.8
       - 8.8.4.4
     disks:
-    - name: rhel-server-7.6-x86_64
-      name_prefix: no
-      size: 100GiB
     - name: docker
       size: 40GiB
       format: cow
