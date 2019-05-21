@@ -66,7 +66,10 @@ nodes:
     cpu: 2
     user_name: root
     root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
+    graphical_console:
+      headless_mode: yes
     custom_properties:
       - name: qemu_cmdline
         value: '["-enable-kvm","-cpu","host,kvm=off,hv_time,hv_relaxed,hv_vapic,hv_synic,hv_stimer,hv_spinlocks=0x1fff,hv_vendor_id=Nvidia43FIX","-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
+    type: high_performance
     template: rhel-server-7.6-x86_64
