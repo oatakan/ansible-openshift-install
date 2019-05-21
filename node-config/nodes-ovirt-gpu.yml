@@ -25,7 +25,7 @@ nodes:
       format: cow
       interface: virtio
       bootable: no
-      storage_domain: pele-Local2
+      storage_domain: pele-Local
     domain: home.ad
     dns_servers:
     - 8.8.8.8
