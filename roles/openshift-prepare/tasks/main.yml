@@ -161,6 +161,11 @@
   notify:
   - Start Docker
 
+- name: ensure docker-py is present
+  pip:
+    name: docker-py
+    state: latest
+
 - name: Insecure Registry Config
   lineinfile:
     dest: /etc/sysconfig/docker
@@ -193,7 +198,10 @@
     device: /dev/{{ docker_storage_mount }}
     unit: MiB
   register: sd_info
-  when: docker_storage_mount is defined and docker_storage_wipe is defined and docker_storage_wipe
+  when:
+    - docker_storage_mount is defined
+    - docker_storage_wipe is defined
+    - docker_storage_wipe|bool
 
 # Remove all partitions from disk
 - name: remove all partitions
@@ -203,16 +211,25 @@
     state: absent
   with_items:
    - "{{ sd_info.partitions }}"
-  when: docker_storage_mount is defined and docker_storage_wipe is defined and docker_storage_wipe
+  when:
+    - docker_storage_mount is defined
+    - docker_storage_wipe is defined
+    - docker_storage_wipe|bool
 
 - name: Wipe key from the disk
   command: wipefs -o 0x1fe /dev/{{ docker_storage_mount }}
-  when: docker_storage_mount is defined and docker_storage_wipe is defined and docker_storage_wipe
+  when:
+    - docker_storage_mount is defined
+    - docker_storage_wipe is defined
+    - docker_storage_wipe|bool
 
 - name: Docker Storage Setup
   command: docker-storage-setup
   register: dockerStorageSetupComplete
-  when: dockerpoolLVS.stdout != "docker-pool" and dockerStorageConfigFileCreated is success and docker_storage_mount in ansible_devices
+  when:
+    - dockerpoolLVS.stdout != "docker-pool"
+    - dockerStorageConfigFileCreated is success
+    - docker_storage_mount in ansible_devices
   notify:
   - Stop Docker
   - Clean Docker Data
