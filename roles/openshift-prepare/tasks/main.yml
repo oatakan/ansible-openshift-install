@@ -161,10 +161,10 @@
   notify:
   - Start Docker
 
-- name: ensure docker-py is present
-  pip:
-    name: docker-py
-    state: latest
+#- name: ensure docker-py is present
+#  pip:
+#    name: docker-py
+#    state: latest
 
 - name: Insecure Registry Config
   lineinfile:
