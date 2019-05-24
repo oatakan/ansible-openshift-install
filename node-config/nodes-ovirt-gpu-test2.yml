@@ -1,0 +1,99 @@
+---
+providers:
+  ovirt:
+    cluster: pele-Local
+nodes:
+  - name: osgmaster1
+    role: master
+    app_name: os_cluster_gpu
+    networks:
+    - name: ovirtmgmt
+      ip: 192.168.1.65
+      netmask: 255.255.255.0
+      gateway: 192.168.1.254
+      domain: home.ad
+      dns_servers:
+      - 8.8.8.8
+      - 8.8.4.4
+    disks:
+    - name: rhel76-x64-efi
+      name_prefix: no
+      size: 100GiB
+    - name: docker
+      size: 40GiB
+      format: cow
+      interface: virtio
+      bootable: no
+      storage_domain: pele-Local
+    - name: nfsdata
+      size: 200GiB
+      format: cow
+      interface: virtio
+      bootable: no
+      storage_domain: pele-Local
+    domain: home.ad
+    dns_servers:
+    - 8.8.8.8
+    - 8.8.4.4
+    memory: 8192
+    cpu: 2
+    user_name: root
+    root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
+    custom_script: |
+      run_cmd:
+       - touch /root/i_wuz_here
+    custom_properties:
+      - name: qemu_cmdline
+        value: '["-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
+    #template: rhel-server-7.6-x86_64
+    template: rhel76-x64-efi
+  - name: osgnode1
+    role: node
+    app_name: os_cluster_gpu
+    networks:
+    - name: ovirtmgmt
+      ip: 192.168.1.66
+      netmask: 255.255.255.0
+      gateway: 192.168.1.254
+      domain: home.ad
+      dns_servers:
+      - 8.8.8.8
+      - 8.8.4.4
+    disks:
+    - name: rhel76-x64-efi
+      name_prefix: no
+      size: 100GiB
+    - name: docker
+      size: 40GiB
+      format: cow
+      interface: virtio
+      bootable: no
+      storage_domain: pele-Local
+    domain: home.ad
+    dns_servers:
+    - 8.8.8.8
+    - 8.8.4.4
+    memory: 16384
+    cpu: 2
+    user_name: root
+    root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
+    custom_script: |
+      growpart:
+        mode: auto
+        devices: ['/dev/vda3']
+        ignore_growroot_disabled: false
+    graphical_console:
+      headless_mode: yes
+      protocol: spice
+    placement_policy: pinned
+    cpu_mode: host_passthrough
+    host: pele
+    host_devices:
+      - name: pci_0000_00_14_0
+      - name: pci_0000_01_00_0
+      - name: pci_0000_01_00_1
+    custom_properties:
+      - name: qemu_cmdline
+        value: '["-enable-kvm","-cpu","host,kvm=off,hv_time,hv_relaxed,hv_vapic,hv_synic,hv_stimer,hv_spinlocks=0x1fff,hv_vendor_id=Nvidia43FIX","-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
+    #type: high_performance
+    template: rhel76-x64-efi
