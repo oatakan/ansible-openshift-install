@@ -4,6 +4,6 @@
   gather_facts: no
   connection: local
   vars_files:
-    - node-config/nodes-ovirt-gpu-test3.yml
+    - node-config/nodes-ovirt-gpu-old.yml
   roles:
     - ansible-role-ovirt

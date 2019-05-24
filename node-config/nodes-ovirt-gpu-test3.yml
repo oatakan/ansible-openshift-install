@@ -94,7 +94,7 @@ nodes:
        - the_root_lvname='root'
        - the_root_pvname=$(vgdisplay -v $the_root_vgname 2> /dev/null | awk '/PV Name/ {print $3}')
        - the_root_pv_partnum=$(echo $the_root_pvname | grep -o '[0-9]$')
-       - the_root_pv_device="/dev/$(lsblk -no pkname $the_root_pvname)"
+       - the_root_pv_device="$(echo $the_root_pvname | grep -o '.*[^0-9]')"
        - growpart $the_root_pv_device $the_root_pv_partnum
        - pvresize $the_root_pvname
        - lvextend /dev/mapper/$the_root_vgname-$the_root_lvname $the_root_pvname

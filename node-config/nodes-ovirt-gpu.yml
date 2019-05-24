@@ -39,12 +39,6 @@ nodes:
     cpu: 2
     user_name: root
     root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
-    custom_script: |
-      run_cmd:
-       - growpart /dev/vda 3
-       - pvresize /dev/vda3
-       - lvextend /dev/mapper/vg00-root /dev/vda3
-       - xfs_growfs /dev/mapper/vg00-root
     custom_properties:
       - name: qemu_cmdline
         value: '["-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
@@ -80,12 +74,6 @@ nodes:
     cpu: 2
     user_name: root
     root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
-    custom_script: |
-      run_cmd:
-       - growpart /dev/vda 3
-       - pvresize /dev/vda3
-       - lvextend /dev/mapper/vg00-root /dev/vda3
-       - xfs_growfs /dev/mapper/vg00-root
     graphical_console:
       headless_mode: yes
       protocol: spice
