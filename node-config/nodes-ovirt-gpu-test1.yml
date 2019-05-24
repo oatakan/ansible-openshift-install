@@ -1,0 +1,73 @@
+---
+providers:
+  ovirt:
+    cluster: pele-Local
+nodes:
+  - name: osgmaster1
+    role: master
+    app_name: os_cluster_gpu
+    networks:
+    - name: ovirtmgmt
+      ip: 192.168.1.65
+      netmask: 255.255.255.0
+      gateway: 192.168.1.254
+      domain: home.ad
+      dns_servers:
+      - 8.8.8.8
+      - 8.8.4.4
+    disks:
+    - name: rhel-server-7.6-x86_64
+      name_prefix: no
+      size: 100GiB
+    - name: docker
+      size: 40GiB
+      format: cow
+      interface: virtio
+      bootable: no
+      storage_domain: pele-Local
+    - name: nfsdata
+      size: 200GiB
+      format: cow
+      interface: virtio
+      bootable: no
+      storage_domain: pele-Local
+    domain: home.ad
+    dns_servers:
+    - 8.8.8.8
+    - 8.8.4.4
+    memory: 8192
+    cpu: 2
+    user_name: root
+    root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
+    template: rhel-server-7.6-x86_64
+  - name: osgnode1
+    role: node
+    app_name: os_cluster_gpu
+    networks:
+    - name: ovirtmgmt
+      ip: 192.168.1.66
+      netmask: 255.255.255.0
+      gateway: 192.168.1.254
+      domain: home.ad
+      dns_servers:
+      - 8.8.8.8
+      - 8.8.4.4
+    disks:
+    - name: rhel-server-7.6-x86_64
+      name_prefix: no
+      size: 100GiB
+    - name: docker
+      size: 40GiB
+      format: cow
+      interface: virtio
+      bootable: no
+      storage_domain: pele-Local
+    domain: home.ad
+    dns_servers:
+    - 8.8.8.8
+    - 8.8.4.4
+    memory: 16384
+    cpu: 2
+    user_name: root
+    root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
+    template: rhel-server-7.6-x86_64
