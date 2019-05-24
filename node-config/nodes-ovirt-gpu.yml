@@ -39,9 +39,6 @@ nodes:
     cpu: 2
     user_name: root
     root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
-    graphical_console:
-      headless_mode: yes
-      protocol: spice
     #template: rhel-server-7.6-x86_64
     template: rhel76-x64-efi
   - name: osgnode1
