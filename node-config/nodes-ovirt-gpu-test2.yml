@@ -88,9 +88,12 @@ nodes:
         ignore_growroot_disabled: false
       runcmd:
        - touch /root/i_wuz_here
-       - pvresize /dev/vda3
-       - lvextend /dev/mapper/vg00-root /dev/vda3
-       - xfs_growfs /dev/mapper/vg00-root
+       - the_root_vgname='vg00'
+       - the_root_lvname='root'
+       - the_root_pvname=$(vgdisplay -v $the_root_vgname 2> /dev/null | awk '/PV Name/ {print $3}')
+       - pvresize $the_root_pvname
+       - lvextend /dev/mapper/$the_root_vgname-$the_root_lvname $the_root_pvname
+       - xfs_growfs /dev/mapper/$the_root_vgname-$the_root_lvname
     graphical_console:
       headless_mode: yes
       protocol: spice
