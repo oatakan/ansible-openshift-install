@@ -16,7 +16,7 @@ nodes:
       - 8.8.8.8
       - 8.8.4.4
     disks:
-    - name: rhel75-x64-100gb-disk
+    - name: rhel76-x64-efi
       name_prefix: no
       size: 100GiB
     - name: docker
@@ -43,7 +43,7 @@ nodes:
       headless_mode: yes
       protocol: spice
     #template: rhel-server-7.6-x86_64
-    template: rhel75-x64-100gb
+    template: rhel76-x64-efi
   - name: osgnode1
     role: node
     app_name: os_cluster_gpu
@@ -57,7 +57,7 @@ nodes:
       - 8.8.8.8
       - 8.8.4.4
     disks:
-    - name: rhel75-x64-100gb-gpu-disk
+    - name: rhel76-x64-efi
       name_prefix: no
       size: 100GiB
     - name: docker
@@ -88,4 +88,4 @@ nodes:
       - name: qemu_cmdline
         value: '["-enable-kvm","-cpu","host,kvm=off,hv_time,hv_relaxed,hv_vapic,hv_synic,hv_stimer,hv_spinlocks=0x1fff,hv_vendor_id=Nvidia43FIX","-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
     #type: high_performance
-    template: rhel75-x64-100gb-gpu
+    template: rhel76-x64-efi
