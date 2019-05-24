@@ -52,7 +52,6 @@ nodes:
        - pvresize $the_root_pvname
        - lvextend /dev/mapper/$the_root_vgname-$the_root_lvname $the_root_pvname
        - xfs_growfs /dev/mapper/$the_root_vgname-$the_root_lvname
-    graphical_console:
     custom_properties:
       - name: qemu_cmdline
         value: '["-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
