@@ -16,7 +16,7 @@ nodes:
       - 8.8.8.8
       - 8.8.4.4
     disks:
-    - name: rhel76-x64-efi
+    - name: rhel80-x64-efi
       name_prefix: no
       size: 100GiB
     - name: docker
@@ -43,7 +43,7 @@ nodes:
       - name: qemu_cmdline
         value: '["-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
     #template: rhel-server-7.6-x86_64
-    template: rhel76-x64-efi
+    template: rhel80-x64-efi
   - name: osgnode1
     role: node
     app_name: os_cluster_gpu
