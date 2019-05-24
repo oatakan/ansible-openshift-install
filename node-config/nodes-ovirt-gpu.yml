@@ -39,6 +39,9 @@ nodes:
     cpu: 2
     user_name: root
     root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
+    custom_properties:
+      - name: qemu_cmdline
+        value: '["-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
     #template: rhel-server-7.6-x86_64
     template: rhel76-x64-efi
   - name: osgnode1
