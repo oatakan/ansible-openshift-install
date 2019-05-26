@@ -74,6 +74,7 @@ nodes:
     cpu: 2
     user_name: root
     root_password: "{{ ansible_password | default(ansible_ssh_password) }}"
+    ballooning_enabled: no
     graphical_console:
       headless_mode: yes
       protocol: spice
