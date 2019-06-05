@@ -8,13 +8,13 @@ nodes:
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
       - device_name: /dev/sda1
-        volume_type: gp2
-        volume_size: 50
-        delete_on_termination: true
+        ebs:
+          volume_size: 50
+          delete_on_termination: true
       - device_name: /dev/xvdb
-        volume_type: gp2
-        volume_size: 30
-        delete_on_termination: true
+        ebs:
+          volume_size: 30
+          delete_on_termination: true
   - name: node1
     role: os_node
     app_name: "{{ osp_cluster_name | default('oscluster1') }}"
@@ -23,13 +23,13 @@ nodes:
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
       - device_name: /dev/sda1
-        volume_type: gp2
-        volume_size: 50
-        delete_on_termination: true
+        ebs:
+          volume_size: 50
+          delete_on_termination: true
       - device_name: /dev/xvdb
-        volume_type: gp2
-        volume_size: 30
-        delete_on_termination: true
+        ebs:
+          volume_size: 30
+          delete_on_termination: true
   - name: node2
     role: os_node
     app_name: "{{ osp_cluster_name | default('oscluster1') }}"
@@ -38,13 +38,13 @@ nodes:
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
       - device_name: /dev/sda1
-        volume_type: gp2
-        volume_size: 50
-        delete_on_termination: true
+        ebs:
+          volume_size: 50
+          delete_on_termination: true
       - device_name: /dev/xvdb
-        volume_type: gp2
-        volume_size: 30
-        delete_on_termination: true
+        ebs:
+          volume_size: 30
+          delete_on_termination: true
   - name: node3
     role: os_node
     app_name: "{{ osp_cluster_name | default('oscluster1') }}"
@@ -53,13 +53,13 @@ nodes:
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
       - device_name: /dev/sda1
-        volume_type: gp2
-        volume_size: 50
-        delete_on_termination: true
+        ebs:
+          volume_size: 50
+          delete_on_termination: true
       - device_name: /dev/xvdb
-        volume_type: gp2
-        volume_size: 30
-        delete_on_termination: true
+        ebs:
+          volume_size: 30
+          delete_on_termination: true
   - name: node4
     role: os_node
     app_name: "{{ osp_cluster_name | default('oscluster1') }}"
@@ -68,10 +68,10 @@ nodes:
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
       - device_name: /dev/sda1
-        volume_type: gp2
-        volume_size: 50
-        delete_on_termination: true
+        ebs:
+          volume_size: 50
+          delete_on_termination: true
       - device_name: /dev/xvdb
-        volume_type: gp2
-        volume_size: 30
-        delete_on_termination: true
+        ebs:
+          volume_size: 30
+          delete_on_termination: true
