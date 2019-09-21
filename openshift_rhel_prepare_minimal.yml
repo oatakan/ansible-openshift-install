@@ -2,5 +2,5 @@
   become: yes
   roles:
   - hosts-file
-  - ansible-role-rhn
+  - oatakan.rhn
   - openshift-prepare-minimal
