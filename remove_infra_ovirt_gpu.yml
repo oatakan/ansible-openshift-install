@@ -4,7 +4,7 @@
   gather_facts: no
   connection: local
   vars_files:
-    - node-config/nodes-ovirt-gpu.yml
+    - node-config/nodes-ovirt-70-gpu.yml
   roles:
     - role: ansible-role-ovirt
       role_action: deprovision
