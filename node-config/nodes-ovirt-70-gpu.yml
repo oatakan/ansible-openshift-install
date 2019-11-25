@@ -24,13 +24,13 @@ nodes:
       format: cow
       interface: virtio
       bootable: no
-      storage_domain: pele-Local
+      storage_domain: data_domain
     - name: nfsdata
       size: 200GiB
       format: cow
       interface: virtio
       bootable: no
-      storage_domain: pele-Local
+      storage_domain: data_domain
     domain: home.ad
     dns_servers:
     - 8.8.8.8
