@@ -22,13 +22,13 @@ nodes:
     - name: docker
       size: 40GiB
       format: cow
-      interface: virtio
+      interface: virtio_scsi
       bootable: no
       storage_domain: data_domain
     - name: nfsdata
       size: 200GiB
       format: cow
-      interface: virtio
+      interface: virtio_scsi
       bootable: no
       storage_domain: data_domain
     domain: home.ad
@@ -62,7 +62,7 @@ nodes:
     - name: docker
       size: 40GiB
       format: cow
-      interface: virtio
+      interface: virtio_scsi
       bootable: no
       storage_domain: data_domain
     domain: home.ad
