@@ -44,10 +44,10 @@ nodes:
         value: '["-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
     custom_script: |
       runcmd:
-       - [ growpart, /dev/vda, 3 ]
-       - [ pvresize, /dev/vda3 ]
-       - [ lvresize, -l, +100%FREE, /dev/vg00/root ]
-       - [ xfs_growfs, /dev/vg00/root ]
+        - [ growpart, /dev/vda, 3 ]
+        - [ pvresize, /dev/vda3 ]
+        - [ lvresize, -l, +100%FREE, /dev/vg00/root ]
+        - [ xfs_growfs, /dev/vg00/root ]
     template: rhel77-x64-efi-v1
   - name: osgnode1
     role: node
@@ -94,8 +94,8 @@ nodes:
     #type: high_performance
     custom_script: |
       runcmd:
-       - [ growpart, /dev/vda, 3 ]
-       - [ pvresize, /dev/vda3 ]
-       - [ lvresize, -l, +100%FREE, /dev/vg00/root ]
-       - [ xfs_growfs, /dev/vg00/root ]
+        - [ growpart, /dev/vda, 3 ]
+        - [ pvresize, /dev/vda3 ]
+        - [ lvresize, -l, +100%FREE, /dev/vg00/root ]
+        - [ xfs_growfs, /dev/vg00/root ]
     template: rhel77-x64-efi-v1
