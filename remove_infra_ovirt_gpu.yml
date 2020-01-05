@@ -5,8 +5,9 @@
   connection: local
   vars:
     ansible_ssh_password: ''
+    env: ovirt-70
   vars_files:
-    - node-config/nodes-ovirt-70-gpu.yml
+    - node-config/nodes-{{ env }}-gpu.yml
   roles:
     - role: ansible-role-ovirt
       role_action: deprovision

@@ -22,13 +22,13 @@ nodes:
     - name: docker
       size: 40GiB
       format: cow
-      interface: virtio
+      interface: virtio_scsi
       bootable: no
       storage_domain: pele-Local
     - name: nfsdata
       size: 200GiB
       format: cow
-      interface: virtio
+      interface: virtio_scsi
       bootable: no
       storage_domain: pele-Local
     domain: home.ad
@@ -42,7 +42,12 @@ nodes:
     custom_properties:
       - name: qemu_cmdline
         value: '["-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
-    #template: rhel-server-7.6-x86_64
+    custom_script: |
+      runcmd:
+        - [ growpart, /dev/vda, 3 ]
+        - [ pvresize, /dev/vda3 ]
+        - [ lvresize, -l, +100%FREE, /dev/vg00/root ]
+        - [ xfs_growfs, /dev/vg00/root ]
     template: rhel76-x64-efi
   - name: osgnode1
     role: node
@@ -63,7 +68,7 @@ nodes:
     - name: docker
       size: 40GiB
       format: cow
-      interface: virtio
+      interface: virtio_scsi
       bootable: no
       storage_domain: pele-Local
     domain: home.ad
@@ -89,4 +94,10 @@ nodes:
       - name: qemu_cmdline
         value: '["-enable-kvm","-cpu","host,kvm=off,hv_time,hv_relaxed,hv_vapic,hv_synic,hv_stimer,hv_spinlocks=0x1fff,hv_vendor_id=Nvidia43FIX","-drive","if=pflash,format=raw,readonly,file=/usr/share/edk2.git/ovmf-x64/OVMF_CODE-pure-efi.fd"]'
     #type: high_performance
+    custom_script: |
+      runcmd:
+        - [ growpart, /dev/vda, 3 ]
+        - [ pvresize, /dev/vda3 ]
+        - [ lvresize, -l, +100%FREE, /dev/vg00/root ]
+        - [ xfs_growfs, /dev/vg00/root ]
     template: rhel76-x64-efi

@@ -3,7 +3,9 @@
   become: no
   gather_facts: no
   connection: local
+  vars:
+    env: ovirt-70
   vars_files:
-    - node-config/nodes-ovirt-70-gpu.yml
+    - node-config/nodes-{{ env }}-gpu.yml
   roles:
     - ansible-role-ovirt
