@@ -16,7 +16,7 @@ nodes:
       - 8.8.8.8
       - 8.8.4.4
     disks:
-    - name: rhel76-x64-efi
+    - name: rhel77-x64-efi-v1
       name_prefix: no
       size: 100GiB
     - name: docker
@@ -48,7 +48,7 @@ nodes:
         - [ pvresize, /dev/vda3 ]
         - [ lvresize, -l, +100%FREE, /dev/vg00/root ]
         - [ xfs_growfs, /dev/vg00/root ]
-    template: rhel76-x64-efi
+    template: rhel77-x64-efi-v1
   - name: osgnode1
     role: node
     app_name: os_cluster_gpu
@@ -62,7 +62,7 @@ nodes:
       - 8.8.8.8
       - 8.8.4.4
     disks:
-    - name: rhel76-x64-efi
+    - name: rhel77-x64-efi-v1
       name_prefix: no
       size: 100GiB
     - name: docker
@@ -100,4 +100,4 @@ nodes:
         - [ pvresize, /dev/vda3 ]
         - [ lvresize, -l, +100%FREE, /dev/vg00/root ]
         - [ xfs_growfs, /dev/vg00/root ]
-    template: rhel76-x64-efi
+    template: rhel77-x64-efi-v1
