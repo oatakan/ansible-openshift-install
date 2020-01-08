@@ -4,8 +4,8 @@
   gather_facts: no
   connection: local
   vars:
-    env: ovirt-70
+    target_ovirt: ovirt-70
   vars_files:
-    - node-config/nodes-{{ env }}-gpu.yml
+    - node-config/nodes-{{ target_ovirt }}-gpu.yml
   roles:
     - ansible-role-ovirt
