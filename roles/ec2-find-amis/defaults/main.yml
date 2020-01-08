@@ -1,6 +1,6 @@
 image_names:
-  centos-7: "CentOS Linux 7 x86_64 HVM EBS ENA 1803_01*"
-  rhel-74: RHEL-7.4_HVM_GA-20170808-x86_64-2-Hourly2-GP2
-  rhel-75: RHEL-7.5_HVM_GA-20180322-x86_64-1-Hourly2-GP2
+  rhel7: "RHEL-7.7_HVM_GA*x86_64*"
+  rhel8: "RHEL-8.1.0_HVM_GA*x86_64*"
+  centos7: "CentOS Linux 7 x86_64 HVM EBS ENA 1901_01*"
 ec2_region: us-east-1
-ec2_ami_name: centos-7
+ec2_ami_name: rhel7
