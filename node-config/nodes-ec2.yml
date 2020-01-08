@@ -7,7 +7,7 @@ nodes:
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/xvda1
+      - device_name: /dev/sda1
         ebs:
           volume_size: 50
           delete_on_termination: true
@@ -26,7 +26,7 @@ nodes:
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/xvda1
+      - device_name: /dev/sda1
         ebs:
           volume_size: 50
           delete_on_termination: true
@@ -41,7 +41,7 @@ nodes:
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/xvda1
+      - device_name: /dev/sda1
         ebs:
           volume_size: 50
           delete_on_termination: true
@@ -56,7 +56,7 @@ nodes:
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/xvda1
+      - device_name: /dev/sda1
         ebs:
           volume_size: 50
           delete_on_termination: true
@@ -71,7 +71,7 @@ nodes:
     instance_type: t2.large
     image: "{{ rhel7_ami_id|default('ami-85241def') }}" #rhel7
     volumes:
-      - device_name: /dev/xvda1
+      - device_name: /dev/sda1
         ebs:
           volume_size: 50
           delete_on_termination: true
