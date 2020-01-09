@@ -2,8 +2,9 @@
   become: no
   vars:
     osp_cluster_name: oscluster1
+    target_ec2: ec2-gpu
   vars_files:
-    - node-config/nodes-ec2.yml
+    - node-config/nodes-{{ target_ec2 }}.yml
   roles:
     - ec2-find-amis
     - ansible-role-ec2
