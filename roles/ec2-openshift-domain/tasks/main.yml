@@ -1,6 +1,6 @@
 - name: Set domain prefix
   set_fact:
-    domain_prefix: "{{ ec2_tag_Name.split('-')[0] | lower }}"
+    domain_prefix: "{{ ec2_tag_Name_test.split('-')[0] | lower }}"
 
 - debug:
     var: domain_prefix
