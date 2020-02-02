@@ -23,7 +23,7 @@
   become: yes
   become_user: root
   tasks:
-    - name: Install go
+    - name: Ensure go is installed
       yum:
         name: golang
         enablerepo: rhel-7-server-optional-rpms

@@ -50,6 +50,7 @@
       - kexec-tools
       - sos
       - psacct
+      - jq
     state: latest
   ignore_errors: true
 
