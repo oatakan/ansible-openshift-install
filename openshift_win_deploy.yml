@@ -432,7 +432,7 @@
 
     - name: Setup client config
       win_copy:
-        content: "{{ hostvars[masters[0]].kube_config['content'] | b64decode }}"
+        content: "{{ hostvars[groups.masters[0]].kube_config['content'] | b64decode }}"
         dest: /k/config
         force: yes
 
@@ -544,8 +544,8 @@
           encap-ip="{{lookup('dig',"{{ ansible_hostname }}")}}"
 
           [kubernetes]
-          apiserver="{{ hostvars[masters[0]].api_url.stdout }}"  # kubernetes api server, or the load balanced address for the multiple api server case
-          token="{{ hostvars[masters[0]].ovn_key.stdout }}"
+          apiserver="{{ hostvars[groups.masters[0]].api_url.stdout }}"  # kubernetes api server, or the load balanced address for the multiple api server case
+          token="{{ hostvars[groups.masters[0]].ovn_key.stdout }}"
           cacert=/k/ca.crt
 
           [ovnnorth]
