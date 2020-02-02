@@ -245,11 +245,19 @@
   vars:
      user: "{{lookup('env','USER')}}"
   tasks:
-    - name: set up environment
-      shell: ln -f -s -n /etc/origin/ openshift.local.config
-      args:
-         chdir: /etc/origin
+#    - name: set up environment
+#      shell: ln -f -s -n /etc/origin/ openshift.local.config
+#      args:
+#         chdir: /etc/origin
+#      delegate_to: "{{ groups.masters | first }}"
+
+    - name: Create a local config sym link
+      file:
+        src: /etc/origin
+        dest: /etc/origin/openshift.local.config
+        state: link
       delegate_to: "{{ groups.masters | first }}"
+
     - name: Create Config
       shell: oc adm create-node-config --hostnames={{inventory_hostname}} --node={{inventory_hostname}} --node-dir=/etc/origin/generated-configs/{{inventory_hostname}}
       args:
@@ -259,21 +267,22 @@
       copy:
         dest: /etc/origin/generated-configs/{{inventory_hostname}}/{{inventory_hostname}}_definition.yaml
         content: |
-                 apiVersion: v1
-                 kind: Node
-                 metadata:
-                     annotations:
-                     labels:
-                       beta.kubernetes.io/arch: amd64
-                       beta.kubernetes.io/os: windows
-                       kubernetes.io/hostname: {{inventory_hostname_short}}
-                     name: {{inventory_hostname_short}}
-                     selfLink: /api/v1/nodes/{{inventory_hostname_short}}
-                 spec: {}
+          apiVersion: v1
+          kind: Node
+          metadata:
+             annotations:
+             labels:
+               beta.kubernetes.io/arch: amd64
+               beta.kubernetes.io/os: windows
+               kubernetes.io/hostname: {{inventory_hostname_short}}
+             name: {{inventory_hostname_short}}
+             selfLink: /api/v1/nodes/{{inventory_hostname_short}}
+          spec: {}
 
       delegate_to: "{{ groups.masters | first }}"
     - name: Define Node to Openshift
       shell: oc create -f /etc/origin/generated-configs/{{inventory_hostname}}/{{inventory_hostname}}_definition.yaml
+      ignore_errors: yes
       delegate_to: "{{ groups.masters | first }}"
     - name: Get Node Subnet
       shell: oc get node {{inventory_hostname_short}}  --output=json | jq .metadata.annotations.ovn_host_subnet > /etc/origin/generated-configs/{{inventory_hostname}}/host.subnet
@@ -293,12 +302,12 @@
         path: /etc/origin/generated-configs/*
         dest:  /etc/origin/generated-configs.tgz
         mode:  666
-    - name: Move the configs to bastion
-      fetch:
-        src:  /etc/origin/generated-configs.tgz
-        dest:  /tmp/
-        flat: yes
-        become: yes
+#    - name: Move the configs to bastion
+#      fetch:
+#        src:  /etc/origin/generated-configs.tgz
+#        dest:  /tmp/
+#        flat: yes
+#        become: yes
     - name: Create the ovn scc account
       shell: oc create serviceaccount ovn
       ignore_errors: yes
@@ -321,18 +330,18 @@
   vars:
      user: "{{lookup('env','USER')}}"
   tasks:
-    - name: Setup local origin structure
-      file:
-        path: /etc/origin/generated-configs
-        state: directory
-    - name: Extract configs
-      unarchive:
-        src: /tmp/generated-configs.tgz
-        dest: /etc/origin/generated-configs
+#    - name: Setup local origin structure
+#      file:
+#        path: /etc/origin/generated-configs
+#        state: directory
+#    - name: Extract configs
+#      unarchive:
+#        src: /tmp/generated-configs.tgz
+#        dest: /etc/origin/generated-configs
     - name: Fix the access mode
       file:
         path: /etc/origin/generated-configs
-        owner: "{{user}}"
+        owner: "{{ user }}"
         recurse: yes
       ignore_errors: yes
     - name: Create windows directory for node files
@@ -377,7 +386,7 @@
         state: absent
     - name: Setup client config
       win_copy:
-        content: "{{ hostvars[masters[0]].kube_config }}"
+        content: "{{ hostvars[masters[0]].kube_config['content'] | b64decode }}"
         dest: /k/config
         force: yes
     - name: Set kubeconfig
