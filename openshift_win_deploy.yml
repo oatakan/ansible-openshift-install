@@ -329,19 +329,19 @@
   tasks:
     - name: Setup local origin structure
       file:
-        path: generated-configs
+        path: '{{ playbook_dir }}/generated-configs'
         state: directory
       delegate_to: localhost
 
     - name: Extract configs
       unarchive:
-        src: generated-configs.tgz
-        dest: generated-configs
+        src: '{{ playbook_dir }}/generated-configs.tgz'
+        dest: '{{ playbook_dir }}/generated-configs'
       delegate_to: localhost
 
     - name: Fix the access mode
       file:
-        path: generated-configs
+        path: '{{ playbook_dir }}/generated-configs'
         owner: "{{ user }}"
         recurse: yes
       ignore_errors: yes
@@ -349,7 +349,7 @@
 
     - name: Create windows directory for node files
       file:
-        path: "/etc/origin/generated-configs/node-{{ groups.masters | first }}/windows"
+        path: '{{ playbook_dir }}generated-configs/node-{{ groups.masters | first }}/windows'
         state: directory
       delegate_to: localhost
 
