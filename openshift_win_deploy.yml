@@ -322,7 +322,7 @@
 #        dest: "{{playbook_dir}}/ovn.token"
 
 - hosts: masters[0]
-  become: yes
+  become: no
   gather_facts: no
   vars:
      user: "{{lookup('env','USER')}}"
