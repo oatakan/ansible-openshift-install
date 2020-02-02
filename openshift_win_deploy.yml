@@ -41,8 +41,6 @@
   remote_user: Administrator
   become_method: runas
   gather_facts: no
-  vars_files:
-    - /etc/ansible/parameters.vars
   vars:
     user: "{{lookup('env','USER')}}"
     windows_docker_version: "18.03.1-ee-3"
@@ -307,8 +305,6 @@
   gather_facts: no
   vars:
      user: "{{lookup('env','USER')}}"
-  vars_files:
-    - /etc/ansible/parameters.vars
   tasks:
     - name: Setup local origin structure
       file:
