@@ -57,7 +57,6 @@
   become_method: runas
   gather_facts: no
   vars:
-    user: "{{lookup('env','USER')}}"
     windows_docker_version: "18.03.1-ee-3"
     bin_dir_path: C:\bin
     k_dir_path: C:\k
@@ -242,8 +241,6 @@
 - hosts: windows
   gather_facts: no
   serial: 1
-  vars:
-     user: "{{lookup('env','USER')}}"
   tasks:
 #    - name: set up environment
 #      shell: ln -f -s -n /etc/origin/ openshift.local.config
@@ -290,7 +287,8 @@
     - name: Create archives per host
       archive:
         path: /etc/origin/generated-configs/{{inventory_hostname}}/*
-        dest: /etc/origin/generated-configs/{{inventory_hostname}}.tgz
+        dest: /etc/origin/generated-configs/{{inventory_hostname}}.zip
+        format: zip
       delegate_to: "{{ groups.masters | first }}"
 
 - hosts: masters[0]
@@ -302,12 +300,11 @@
         path: /etc/origin/generated-configs/*
         dest:  /etc/origin/generated-configs.tgz
         mode:  666
-#    - name: Move the configs to bastion
-#      fetch:
-#        src:  /etc/origin/generated-configs.tgz
-#        dest:  /tmp/
-#        flat: yes
-#        become: yes
+    - name: Move the configs to local
+      fetch:
+        src:  /etc/origin/generated-configs.tgz
+        dest: generated-configs.tgz
+        flat: yes
     - name: Create the ovn scc account
       shell: oc create serviceaccount ovn
       ignore_errors: yes
@@ -330,67 +327,110 @@
   vars:
      user: "{{lookup('env','USER')}}"
   tasks:
-#    - name: Setup local origin structure
-#      file:
-#        path: /etc/origin/generated-configs
-#        state: directory
-#    - name: Extract configs
-#      unarchive:
-#        src: /tmp/generated-configs.tgz
-#        dest: /etc/origin/generated-configs
+    - name: Setup local origin structure
+      file:
+        path: generated-configs
+        state: directory
+      delegate_to: localhost
+
+    - name: Extract configs
+      unarchive:
+        src: generated-configs.tgz
+        dest: generated-configs
+      delegate_to: localhost
+
     - name: Fix the access mode
       file:
-        path: /etc/origin/generated-configs
+        path: generated-configs
         owner: "{{ user }}"
         recurse: yes
       ignore_errors: yes
+      delegate_to: localhost
+
     - name: Create windows directory for node files
       file:
         path: "/etc/origin/generated-configs/node-{{ groups.masters | first }}/windows"
         state: directory
+      delegate_to: localhost
 
 - hosts: windows
   gather_facts: no
   serial: 1
-  vars:
-     user: "{{lookup('env','USER')}}"
   tasks:
-    - name: Pull the kubernetes node kubelet
-      win_shell: curl.exe -L -k https://dl.k8s.io/v1.11.3/kubernetes-node-windows-amd64.tar.gz -o C:\Windows\Temp\kubernetes.tar.gz
-      async: 3600
-      poll: 5
-    - name: Untar kubernetes
-      win_shell: tar -xvzf c:\Windows\Temp\kubernetes.tar.gz -C \Windows\Temp
-    - name: Move the kube to bin
-      win_shell: copy "C:\Windows\Temp\kubernetes\node\bin\*" C:\bin
-    - name: Mkdir \k
+#    - name: Pull the kubernetes node kubelet
+#      win_shell: curl.exe -L -k https://dl.k8s.io/v1.11.3/kubernetes-node-windows-amd64.tar.gz -o C:\Windows\Temp\kubernetes.tar.gz
+#      async: 3600
+#      poll: 5
+
+    - name: Download the kubernetes node file
+      win_get_url:
+        url: https://dl.k8s.io/v1.11.3/kubernetes-node-windows-amd64.tar.gz
+        dest: C:\Windows\Temp\kubernetes.tar.gz
+        validate_certs: no
+        follow_redirects: all
+
+    - name: Install PSCX
+      win_psmodule:
+        name: Pscx
+        state: present
+
+    - name: Unzip kubernetes
+      win_unzip:
+        src: c:\Windows\Temp\kubernetes.tar.gz
+        dest: C:\Windows\Temp
+        creates: C:\Windows\Temp\kubernetes\node\bin
+
+#    - name: Untar kubernetes
+#      win_shell: tar -xvzf c:\Windows\Temp\kubernetes.tar.gz -C \Windows\Temp
+
+    - name: Copy kubernetes bin directory
+      win_copy:
+        src: C:\Windows\Temp\kubernetes\node\bin
+        dest: C:\bin
+        remote_src: yes
+
+#    - name: Move the kube to bin
+#      win_shell: copy "C:\Windows\Temp\kubernetes\node\bin\*" C:\bin
+
+    - name: Ensure C:\k exists
       win_file:
         path: C:\k
         state: directory
-        ignore_errors: yes
+
     - name: move the node files
       win_copy:
-        src: /etc/origin/generated-configs/{{inventory_hostname}}.tgz
-        dest: c:\k\{{inventory_hostname}}.tgz
+        src: generated-configs/{{ inventory_hostname }}.zip
+        dest: c:\k\{{ inventory_hostname }}.zip
         force: yes
+
+#    - name: Unzip the config files
+#      win_shell: tar -xvzf /k/{{inventory_hostname}}.zip  -C \k\
+
     - name: Unzip the config files
-      win_shell: tar -xvzf /k/{{inventory_hostname}}.tgz  -C \k\
+      win_unzip:
+        src: c:\k\{{ inventory_hostname }}.zip
+        dest: c:\k\
+
     - name: Add the master cluster config file
       win_copy:
-        src: "/etc/origin/generated-configs/node-{{ groups.masters | first }}/windows/"
+        src: generated-configs/node-{{ groups.masters | first }}/windows/
         dest: /k/
         force: yes
+
     - name: Cleanup archive path
       win_file:
         path: c:\k\etc
         state: absent
+
     - name: Setup client config
       win_copy:
         content: "{{ hostvars[masters[0]].kube_config['content'] | b64decode }}"
         dest: /k/config
         force: yes
+
     - name: Set kubeconfig
       win_shell: "[System.Environment]::SetEnvironmentVariable('KUBECONFIG', 'c:/k/config;c:/k/system-node-1.masters | first }}.kubeconfig', [System.EnvironmentVariableTarget]::Machine)"
+
     - name: Set kubeconfig
       win_shell: "[System.Environment]::SetEnvironmentVariable('KUBECONFIG', 'c:/k/config;c:/k/system-node-{{ groups.masters | first }}.kubeconfig')"
 
@@ -398,7 +438,6 @@
   gather_facts: no
   serial: 1
   vars:
-    user: "{{lookup('env','USER')}}"
     k_dir_path: C:\k
     ovs_network_name: "external"
   tasks:
@@ -464,7 +503,6 @@
 - hosts: windows
   gather_facts: no
   vars:
-    user: "{{lookup('env','USER')}}"
     k_dir_path: C:\k
     ovs_network_name: "external"
   tasks:
@@ -603,9 +641,9 @@
         executable: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
         arguments: -ExecutionPolicy Unrestricted -NonInteractive ovs-vsctl set Open_vSwitch . external_ids:system-id="{{ guid.stdout | trim  }}"
         frequency: once
-        enabled:   true
-        user:      SYSTEM
-        time:      "14:00:00"
+        enabled: true
+        user: SYSTEM
+        time: "14:00:00"
     - name: Run the schedule task
       win_shell: Start-ScheduledTask -TaskName ovnsetguid -AsJob
     - name: Setup Kubeovn Service
