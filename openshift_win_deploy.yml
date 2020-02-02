@@ -463,7 +463,6 @@
         triggers:
           - type: boot
             enabled: true
-          time: "00:00:00"
         username: SYSTEM
     - name: Windows | Setup Windows SDN
       win_shell: Start-ScheduledTask -TaskName "setup_sdn"
