@@ -453,16 +453,18 @@
     - name: Windows | Prepare Windows scheduled tasks for the SDN setup
       win_scheduled_task:
         name: "setup_sdn"
-        executable: powershell.exe
-        arguments: >
-          -ExecutionPolicy Unrestricted -NonInteractive -Command
-          "& '{{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.ps1' -OVSNetworkName {{ ovs_network_name }}
-          -SubnetFile {{ k_dir_path }}\host.subnet 2>&1 > '{{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.log';
-          Write-Output $LASTEXITCODE > {{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.status"
-        frequency: once
-        enabled: true
-        time: "00:00:00"
-        user: SYSTEM
+        actions:
+          - path: powershell.exe
+            arguments: >
+              -ExecutionPolicy Unrestricted -NonInteractive -Command
+              "& '{{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.ps1' -OVSNetworkName {{ ovs_network_name }}
+              -SubnetFile {{ k_dir_path }}\host.subnet 2>&1 > '{{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.log';
+              Write-Output $LASTEXITCODE > {{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.status"
+        triggers:
+          - type: boot
+            enabled: true
+          time: "00:00:00"
+        username: SYSTEM
     - name: Windows | Setup Windows SDN
       win_shell: Start-ScheduledTask -TaskName "setup_sdn"
     - name: Windows | Wait for Windows SDN setup
@@ -652,12 +654,14 @@
       win_scheduled_task:
         name: ovnsetguid
         description: Set OVN System Guid
-        executable: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
-        arguments: -ExecutionPolicy Unrestricted -NonInteractive ovs-vsctl set Open_vSwitch . external_ids:system-id="{{ guid.stdout | trim  }}"
-        frequency: once
-        enabled: true
-        user: SYSTEM
-        time: "14:00:00"
+        actions:
+          - path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+            arguments: -ExecutionPolicy Unrestricted -NonInteractive ovs-vsctl set Open_vSwitch . external_ids:system-id="{{ guid.stdout | trim  }}"
+        triggers:
+          - type: boot
+            enabled: true
+        username: SYSTEM
+#        time: "14:00:00"
     - name: Run the schedule task
       win_shell: Start-ScheduledTask -TaskName ovnsetguid -AsJob
     - name: Setup Kubeovn Service
