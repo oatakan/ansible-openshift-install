@@ -376,9 +376,15 @@
         allow_clobber: yes
         state: present
 
+    - name: Unzip kubernetes tar
+      win_unzip:
+        src: C:\Windows\Temp\kubernetes.tar.gz
+        dest: C:\Windows\Temp
+        creates: C:\Windows\Temp\kubernetes.tar
+
     - name: Unzip kubernetes
       win_unzip:
-        src: c:\Windows\Temp\kubernetes.tar.gz
+        src: C:\Windows\Temp\kubernetes.tar
         dest: C:\Windows\Temp
         creates: C:\Windows\Temp\kubernetes\node\bin
 
