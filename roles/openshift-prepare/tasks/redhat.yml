@@ -1,0 +1,253 @@
+---
+
+- name: disable cloud-init
+  file:
+    path: /etc/cloud/cloud-init.disabled
+    state: touch
+  ignore_errors: yes
+
+- name: change dns servers
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+  when:
+    - change_dns_servers|bool
+    - domain is defined
+    - dns_servers is defined
+    - dns_servers|length > 0
+
+- name: configure sudoers
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: '^Defaults.*requiretty'
+    line: 'Defaults    !requiretty'
+    state: present
+    validate: visudo -cf %s
+    backup: no
+
+- name: install epel
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+  register: install_epel
+  until: '"error" not in install_epel'
+  retries: 5
+  delay: 10
+
+- name: install packages
+  yum:
+    name:
+      - PyYAML
+      - python-devel
+      - openssl-devel
+      - iptables-services
+      - bridge-utils
+      - NetworkManager
+      - ntp
+      - net-tools
+      - bind-utils
+      - bash-completion
+      - kexec-tools
+      - sos
+      - psacct
+    state: latest
+  ignore_errors: true
+
+# this should be temporary fix
+- name: install openswitch 2.6.1 for origin release 3.10
+  yum:
+    name: http://cbs.centos.org/kojifiles/packages/openvswitch/2.6.1/10.1.git20161206.el7/x86_64/openvswitch-2.6.1-10.1.git20161206.el7.x86_64.rpm
+    state: present
+  when:
+    - openshift_version is defined
+    - openshift_deployment_type is defined
+    - openshift_version == '3.10'
+    - openshift_deployment_type == 'origin'
+  ignore_errors: yes
+
+# this should be temporary fix
+#- name: install python-docker
+#  yum:
+#    name: docker-python
+#    state: present
+#  when:
+#    - openshift_version is defined
+#    - openshift_deployment_type is defined
+#    - openshift_version == '3.11'
+#    - openshift_deployment_type == 'origin'
+#  ignore_errors: yes
+
+- name: install packages atomic
+  yum:
+    name:
+      - atomic-openshift-utils
+      - atomic-openshift-excluder
+      - atomic-openshift-docker-excluder
+    state: latest
+  ignore_errors: true
+  when: ansible_distribution == 'RedHat'
+
+- name: install more packages
+  yum:
+    name: python-pip
+    state: latest
+
+- name: pip upgrade setuptools and pip
+  pip:
+    name:
+      - pip
+      - setuptools
+    state: latest
+
+- name: enable selinux
+  selinux:
+    policy: targeted
+    state: enforcing
+  register: selinux
+
+- name: enable and start services
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+  - ntpd
+  - NetworkManager
+#  - dnsmasq
+
+#- name: Reboot server
+#  shell: "sleep 3; /usr/sbin/shutdown -r now"
+#  async: 1
+#  poll: 0
+#  failed_when: false
+#  changed_when: true
+#  ignore_errors: true
+#  when: ansible_ssh_host != '127.0.0.1' and selinux.changed
+#
+#- name: Wait for reboot to start
+#  pause:
+#    seconds: 5
+#  when: selinux.changed
+#
+#- name: waiting for system to come online
+#  wait_for: host="{{ hostvars[inventory_hostname].ansible_host | default(inventory_hostname) }}" port="{{ hostvars[inventory_hostname].ansible_ssh_port | default('22') }}" search_regex=OpenSSH
+#  delegate_to: 127.0.0.1
+#  become: no
+#  when: inventory_hostname != '127.0.0.1' or hostvars[inventory_hostname].ansible_host != '127.0.0.1' and selinux.changed
+
+- name: reboot system
+  reboot:
+  when:
+    - selinux.changed
+    - inventory_hostname != '127.0.0.1' or hostvars[inventory_hostname].ansible_host != '127.0.0.1'
+
+- name: unexclude atomic-openshift package for the duration of the install
+  command: atomic-openshift-excluder unexclude
+  ignore_errors: true
+  when: ansible_distribution == 'RedHat'
+
+#- name: install Docker
+#  yum:
+#    name: docker
+#    state: installed
+#    update_cache: yes
+#  register: dockerInstalled
+#  notify:
+#  - Start Docker
+
+# see https://github.com/openshift/origin/issues/21590
+# yum downgrade docker-1.13.1-75.git8633870.el7_5.x86_64 docker-client-1.13.1-75.git8633870.el7_5.x86_64 docker-common-1.13.1-75.git8633870.el7_5.x86_64 docker-rhel-push-plugin-1.13.1-75.git8633870.el7_5.x86_64
+
+- name: install Docker
+  yum:
+    name: docker-1.13.1-75.git8633870.el7_5.x86_64
+    state: installed
+    update_cache: yes
+  register: dockerInstalled
+  notify:
+  - Start Docker
+
+#- name: ensure docker-py is present
+#  pip:
+#    name: docker-py
+#    state: latest
+
+- name: Insecure Registry Config
+  lineinfile:
+    dest: /etc/sysconfig/docker
+    regexp: "^OPTIONS"
+    line: OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16 --log-opt max-size=1M --log-opt max-file=3'
+    backup: yes
+    backrefs: yes
+    state: present
+  register: dockerConfigUpdated
+
+- name: Create Docker Storage Config
+  blockinfile:
+    dest: /etc/sysconfig/docker-storage-setup
+    create: yes
+    content: |
+      DEVS={{ docker_storage_mount}}
+      VG=docker-vg
+  register: dockerStorageConfigFileCreated
+  when: docker_storage_mount in ansible_devices
+  notify:
+  - Stop Docker
+  - Clean Docker Data
+
+- name: Check if LVS exists
+  shell: lvs | grep docker-pool | awk '{ print $1}'
+  register: dockerpoolLVS
+
+- name: Read device information
+  parted:
+    device: /dev/{{ docker_storage_mount }}
+    unit: MiB
+  register: sd_info
+  when:
+    - docker_storage_mount is defined
+    - docker_storage_wipe is defined
+    - docker_storage_wipe|bool
+
+# Remove all partitions from disk
+- name: remove all partitions
+  parted:
+    device: /dev/{{ docker_storage_mount }}
+    number: "{{ item.num }}"
+    state: absent
+  with_items:
+   - "{{ sd_info.partitions }}"
+  when:
+    - docker_storage_mount is defined
+    - docker_storage_wipe is defined
+    - docker_storage_wipe|bool
+
+- name: Wipe key from the disk
+  command: wipefs -o 0x1fe /dev/{{ docker_storage_mount }}
+  when:
+    - docker_storage_mount is defined
+    - docker_storage_wipe is defined
+    - docker_storage_wipe|bool
+
+- name: Docker Storage Setup
+  command: docker-storage-setup
+  register: dockerStorageSetupComplete
+  when:
+    - dockerpoolLVS.stdout != "docker-pool"
+    - dockerStorageConfigFileCreated is success
+    - docker_storage_mount in ansible_devices
+  notify:
+  - Stop Docker
+  - Clean Docker Data
+  - Start Docker
+
+# see https://bugzilla.redhat.com/show_bug.cgi?id=1550582
+#- name: restart dbus and dnsmasq
+#  service:
+#    name: "{{ item }}"
+#    state: restarted
+#  with_items:
+#  - dbus
+#  - dnsmasq
+
+

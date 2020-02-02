@@ -7,6 +7,8 @@ providers:
 
 nodes:
   - name: osmaster1
+    role: os_master
+    app_name: openshift_311_test
     networks:
     - name: mgmt
       ip: 192.168.1.34
@@ -23,10 +25,12 @@ nodes:
       - 8.8.4.4
     memory: 16384
     cpu: 2
-    template: rhel76-x64-bigdisk_v1
+    template: rhel77-x64-bigdisk_v1
     snapshot_src: Linked
     linked_clone: True
   - name: osnode1
+    role: os_node
+    app_name: openshift_311_test
     networks:
     - name: mgmt
       ip: 192.168.1.35
@@ -43,6 +47,33 @@ nodes:
       - 8.8.4.4
     memory: 8192
     cpu: 2
-    template: rhel76-x64-bigdisk_v1
+    template: rhel77-x64-bigdisk_v1
     snapshot_src: Linked
     linked_clone: True
+  - name: oswin1
+    role: os_windows
+    app_name: openshift_311_test
+    networks:
+    - name: mgmt
+      ip: 192.168.1.33
+      netmask: 255.255.255.0
+      gateway: 192.168.1.254
+      domain: home.ad
+      dns_servers:
+      - 8.8.8.8
+      - 8.8.4.4
+    domain: home.ad
+    memory: 8192
+    cpu: 2
+    template: "{{ win2019_template_name|default('windows-2019-datacenter') }}"
+    snapshot_src: Linked
+    linked_clone: True
+    customization:
+      autologon: True
+      orgname: Ansible
+      fullname: Ansible
+      timezone: 20
+      password: '{{ ansible_password | default(ansible_ssh_password) }}'
+      runonce:
+      - powershell.exe -command "& $([scriptblock]::Create((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'))) -ForceNewSSLCert -EnableCredSSP"
+      - winrm set winrm/config/service/auth @{CredSSP="true"}
