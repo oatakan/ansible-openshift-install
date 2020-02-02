@@ -123,6 +123,7 @@
         Find-PackageProvider -Name "Nuget" | Install-PackageProvider -Force
         Install-Module -Name "DockerMsftProvider" -Repository "PSGallery" -Force
         Install-Package -Name "Docker" -ProviderName "DockerMsftProvider" -Force
+      ignore_errors: yes
     - name: Windows | Setup Docker service
       win_shell: |
         $ErrorActionPreference = "Stop"
