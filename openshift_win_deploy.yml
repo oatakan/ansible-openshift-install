@@ -354,6 +354,7 @@
       delegate_to: localhost
 
 - hosts: windows
+  become: no
   gather_facts: no
   serial: 1
   tasks:
@@ -435,6 +436,7 @@
       win_shell: "[System.Environment]::SetEnvironmentVariable('KUBECONFIG', 'c:/k/config;c:/k/system-node-{{ groups.masters | first }}.kubeconfig')"
 
 - hosts: windows
+  become: no
   gather_facts: no
   serial: 1
   vars:
@@ -501,6 +503,7 @@
         }
 
 - hosts: windows
+  become: no
   gather_facts: no
   vars:
     k_dir_path: C:\k
@@ -519,6 +522,7 @@
 
 # Part 2
 - hosts: windows
+  become: no
   serial: 1
   tasks:
     - name: Create the master directory
@@ -564,6 +568,7 @@
         flat: yes
 
 - hosts: windows
+  become: no
   serial: 1
   tasks:
     - name: Mkdir \cni
@@ -600,6 +605,7 @@
         force: yes
 
 - hosts: windows
+  become: no
   gather_facts: no
   tasks:
     - name: Add port 10250 to windows firewall rules
@@ -628,6 +634,7 @@
 
 # Part 2
 - hosts: windows
+  become: no
   gather_facts: no
   tasks:
     - name: Set up the GUID for openvswitch
@@ -657,6 +664,7 @@
 
 # Part 3
 - hosts: windows
+  become: no
   serial: 1
   gather_facts: no
   tasks:
