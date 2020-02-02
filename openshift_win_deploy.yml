@@ -661,7 +661,6 @@
           - type: boot
             enabled: true
         username: SYSTEM
-#        time: "14:00:00"
     - name: Run the schedule task
       win_shell: Start-ScheduledTask -TaskName ovnsetguid -AsJob
     - name: Setup Kubeovn Service
