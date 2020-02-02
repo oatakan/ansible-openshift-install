@@ -373,6 +373,7 @@
     - name: Install PSCX
       win_psmodule:
         name: Pscx
+        allow_clobber: yes
         state: present
 
     - name: Unzip kubernetes
