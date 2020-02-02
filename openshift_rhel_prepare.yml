@@ -4,7 +4,7 @@
   pre_tasks:
     - name: gather facts
       setup:
-      when: ansible_os_family == 'RedHat'
+      when: groups.windows is not defined or inventory_hostname not in groups.windows
   roles:
     - hosts-file
     - oatakan.rhn
