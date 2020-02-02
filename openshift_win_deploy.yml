@@ -119,8 +119,6 @@
     - name: Windows | Install Docker
       win_shell: |
         $ErrorActionPreference = "Stop"
-        Import-Module Microsoft.PowerShell.Archive
-        Import-Module Pscx -NoClobber
         Write-Output "Installing Docker {{ windows_docker_version }}"
         Find-PackageProvider -Name "Nuget" | Install-PackageProvider -Force
         Install-Module -Name "DockerMsftProvider" -Repository "PSGallery" -Force
