@@ -8,7 +8,9 @@
 
 - name: reboot host if needed
   win_reboot:
-  when: change_hostname.reboot_required
+  when:
+    - change_hostname.reboot_required is defined
+    - change_hostname.reboot_required
 
 - name: build hosts file
   win_lineinfile:
