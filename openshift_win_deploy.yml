@@ -6,10 +6,10 @@
       shell: "oc whoami --show-server"
       register: api_url
 
-    - name: create api host file
-      copy:
-        content: "{{ api_url.stdout }}"
-        dest: "{{playbook_dir}}/api_host.txt"
+#    - name: create api host file
+#      copy:
+#        content: "{{ api_url.stdout }}"
+#        dest: "{{ playbook_dir }}/api_host.txt"
 
     - name: Patch openshift-node/sync to only be on linux nodes
       shell: oc patch namespace openshift-node -p '{"metadata":{"annotations":{"openshift.io/node-selector":"beta.kubernetes.io/os=linux"}}}'
@@ -299,10 +299,10 @@
       shell: oc sa get-token ovn
       register: ovn_key
 
-    - name: create ovn token file
-      copy:
-        content: "{{ ovn_key.stdout }}"
-        dest: "{{playbook_dir}}/ovn.token"
+#    - name: create ovn token file
+#      copy:
+#        content: "{{ ovn_key.stdout }}"
+#        dest: "{{playbook_dir}}/ovn.token"
 
 - hosts: masters[0]
   become: yes
@@ -477,8 +477,8 @@
           encap-ip="{{lookup('dig',"{{ ansible_hostname }}")}}"
 
           [kubernetes]
-          apiserver="{{lookup('file', '{{playbook_dir}}/api_host.txt')}}"  # kubernetes api server, or the load balanced address for the multiple api server case
-          token="{{lookup('file', '{{playbook_dir}}/ovn.token')}}"
+          apiserver="{{ hostvars[masters[0]].api_url.stdout }}"  # kubernetes api server, or the load balanced address for the multiple api server case
+          token="{{ hostvars[masters[0]].ovn_key.stdout }}"
           cacert=/k/ca.crt
 
           [ovnnorth]
