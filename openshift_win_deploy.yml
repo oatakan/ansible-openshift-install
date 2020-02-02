@@ -282,7 +282,7 @@
       ignore_errors: yes
       delegate_to: "{{ groups.masters | first }}"
     - name: Get Node Subnet
-      shell: oc get node {{inventory_hostname_short}}  --output=json | jq .metadata.annotations.ovn_host_subnet > /etc/origin/generated-configs/{{inventory_hostname}}/host.subnet
+      shell: oc get node {{inventory_hostname_short}} --output=json | jq .metadata.annotations.ovn_host_subnet > /etc/origin/generated-configs/{{inventory_hostname}}/host.subnet
       delegate_to: "{{ groups.masters | first }}"
     - name: Create archives per host
       archive:
@@ -464,8 +464,10 @@
           - type: boot
             enabled: true
         username: SYSTEM
+
     - name: Windows | Setup Windows SDN
       win_shell: Start-ScheduledTask -TaskName "setup_sdn"
+
     - name: Windows | Wait for Windows SDN setup
       wait_for_connection:
         # Allow 60 seconds for the setup_sdn task to finish. Connection will
@@ -473,6 +475,7 @@
         delay: 60
         # Maximum of 10 minutes allowed timeout.
         timeout: 600
+
     - name: Windows | Check Windows SDN setup task
       win_shell: |
         $ErrorActionPreference = "Stop"
@@ -491,14 +494,17 @@
             Throw "Scheduled task ${taskName} returned with error"
         }
         Write-Output "Scheduled task ${taskName} returned with success"
+
     - name: Windows | Clean up Windows SDN setup task
       win_scheduled_task:
         name: "setup_sdn"
         state: absent
+
     - name: Windows | Restart the Docker service
       win_service:
         name: Docker
         state: restarted
+
     - name: Windows | Check if the HNS network for OVS is available in the Docker API
       win_shell: |
         $ErrorActionPreference = "Stop"
@@ -648,7 +654,9 @@
     - name: Set up the GUID for openvswitch
       win_shell: "$GUID = (New-Guid).Guid; Write-Output $GUID"
       register: guid
+
     - debug: msg="GUID is {{ guid.stdout }}"
+
     - name: create a schedule task
       win_scheduled_task:
         name: ovnsetguid
@@ -660,16 +668,24 @@
           - type: boot
             enabled: true
         username: SYSTEM
+
     - name: Run the schedule task
       win_shell: Start-ScheduledTask -TaskName ovnsetguid -AsJob
+
     - name: Setup Kubeovn Service
       win_shell: setup_kubeovn_service.ps1
       args:
         chdir: \k\hybrid\3.11\bin
+
     - name: Setup Kubelet Service
       win_shell: setup_kubelet_service.ps1
       args:
         chdir: \k\hybrid\3.11\bin
+
+    - name: Clean up Windows SDN system guid task
+      win_scheduled_task:
+        name: ovnsetguid
+        state: absent
 
 # Part 3
 - hosts: windows
