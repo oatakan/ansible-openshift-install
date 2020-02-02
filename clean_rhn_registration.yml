@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: all:!windows
   become: yes
   tasks:
   - name: clean rhn registration
