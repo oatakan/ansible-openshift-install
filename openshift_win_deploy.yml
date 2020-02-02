@@ -14,12 +14,10 @@
     - name: Patch openshift-node/sync to only be on linux nodes
       shell: oc patch namespace openshift-node -p '{"metadata":{"annotations":{"openshift.io/node-selector":"beta.kubernetes.io/os=linux"}}}'
 
-    - name: make sure client config is local
-      fetch:
+    - name: copy kube config to a variable
+      slurp:
         src: /root/.kube/config
-        dest: kube_config
-        force: yes
-        flat: yes
+      register: kube_config
 
 - hosts: masters[0]
   become: yes
@@ -368,7 +366,7 @@
         state: absent
     - name: Setup client config
       win_copy:
-        src: "kube_config"
+        content: "{{ hostvars[masters[0]].kube_config }}"
         dest: /k/config
         force: yes
     - name: Set kubeconfig
