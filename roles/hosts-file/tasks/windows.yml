@@ -14,18 +14,18 @@
 
 - name: build hosts file
   win_lineinfile:
-    dest: /etc/hosts
+    dest: C:\Windows\System32\Drivers\etc\hosts
     regexp: '.*{{ item }}$'
-    line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ item }}"
+    line: "{{ hostvars[item].ansible_host }} {{ item }}"
     state: present
-  when: (hostvars[item].ansible_default_ipv4.address is defined) and (hostvars[item].ec2_private_dns_name is not defined)
+  when: (hostvars[item].ansible_host is defined) and (hostvars[item].ec2_private_dns_name is not defined)
   with_items: "{{ play_hosts }}"
 
 - name: build hosts file
   win_lineinfile:
-    dest: /etc/hosts
+    dest: C:\Windows\System32\Drivers\etc\hosts
     regex: '.*{{ item }}$'
-    line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ hostvars[item].ec2_private_dns_name }}"
+    line: "{{ hostvars[item].ansible_host }} {{ hostvars[item].ec2_private_dns_name }}"
     state: present
-  when: (hostvars[item].ansible_default_ipv4.address is defined) and (hostvars[item].ec2_private_dns_name is defined)
+  when: (hostvars[item].ansible_host is defined) and (hostvars[item].ec2_private_dns_name is defined)
   with_items: "{{ play_hosts }}"

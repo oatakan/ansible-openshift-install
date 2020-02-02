@@ -1,3 +1,8 @@
-- hosts: windows:!new_nodes:!parking
+- hosts: all:!new_nodes:!parking
+  gather_facts: no
+  pre_tasks:
+    - name: gather facts
+      setup:
+      when: ansible_os_family == 'Windows'
   roles:
     - hosts-file
