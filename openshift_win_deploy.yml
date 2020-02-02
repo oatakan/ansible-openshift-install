@@ -28,17 +28,32 @@
         name: golang
         enablerepo: rhel-7-server-optional-rpms
 
-    - name: Clear previous build if it exists
-      file: path=~/ovn-kubernetes state=absent
+#    - name: Clear previous build if it exists
+#      file:
+#        path: ~/ovn-kubernetes
+#        state: absent
 
-    - name: Clone to ovn-kubernetes repo
-      shell: git clone https://github.com/glennswest/ovn-kubernetes  ~/ovn-kubernetes
+#    - name: Clone to ovn-kubernetes repo
+#      shell: git clone https://github.com/glennswest/ovn-kubernetes  ~/ovn-kubernetes
 
-    - name: Build The Controller (Windows)
-      shell: cd ~/ovn-kubernetes;cd go-controller;make clean;make windows
+    - name: Clone ovn-kubernetes repo
+      git:
+        repo: https://github.com/glennswest/ovn-kubernetes
+        dest: /root/ovn-kubernetes
+
+#    - name: Build The Controller (Windows)
+#      shell: cd ~/ovn-kubernetes;cd go-controller;make clean;make windows
+
+    - name: Build the Controller (Windows)
+      make:
+        chdir: /root/ovn-kubernetes/go-controller
+        target: "{{ item }}"
+      loop:
+        - clean
+        - windows
 
 - hosts: windows
-  remote_user: Administrator
+  become_user: Administrator
   become_method: runas
   gather_facts: no
   vars:
