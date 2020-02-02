@@ -1,4 +1,4 @@
-- hosts: all:!new_nodes:!parking
+- hosts: all:!new_nodes:!parking:!windows
   become: yes
   roles:
   - hosts-file
