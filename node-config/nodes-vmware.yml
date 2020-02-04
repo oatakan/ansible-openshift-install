@@ -68,7 +68,7 @@ nodes:
     template: "{{ win2019_template_name|default('windows-2019-datacenter') }}"
     snapshot_src: Linked
     linked_clone: True
-    nested_virt: yes
+    #nested_virt: yes
     customization:
       autologon: True
       orgname: Ansible
