@@ -51,6 +51,7 @@
       - sos
       - psacct
       - jq
+      - git
     state: latest
   ignore_errors: true
 

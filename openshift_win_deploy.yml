@@ -349,7 +349,7 @@
 
     - name: Create windows directory for node files
       file:
-        path: '{{ playbook_dir }}generated-configs/node-{{ groups.masters | first }}/windows'
+        path: '{{ playbook_dir }}/generated-configs/node-{{ groups.masters | first }}/windows'
         state: directory
       delegate_to: localhost
 
