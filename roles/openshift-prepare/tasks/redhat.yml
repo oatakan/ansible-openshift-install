@@ -53,7 +53,10 @@
       - jq
       - git
     state: latest
-  ignore_errors: true
+  register: install_packages
+  until: install_packages is success
+  retries: 5
+  delay: 10
 
 # this should be temporary fix
 - name: install openswitch 2.6.1 for origin release 3.10
