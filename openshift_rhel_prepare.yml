@@ -5,6 +5,14 @@
     - name: gather facts
       setup:
       when: groups.windows is not defined or inventory_hostname not in groups.windows
+    - name: set default ip address for windows nodes
+      set_fact:
+        ansible_default_ipv4:
+          address: '{{ ansible_host }}'
+      when:
+        - groups.windows is defined
+        - inventory_hostname in groups.windows
+        - ansible_host is defined
   roles:
     - hosts-file
     - oatakan.rhn

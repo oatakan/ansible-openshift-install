@@ -110,6 +110,17 @@
     state: enforcing
   register: selinux
 
+- name: configure networking
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
+    line: '{{ item }}'
+  loop:
+    - 'NM_CONTROLLED=yes'
+    - 'PEERDNS=yes'
+  when:
+    - os_sdn_network_plugin_name == 'cni'
+    - ansible_default_ipv4.interface is defined
+
 - name: enable and start services
   service:
     name: "{{ item }}"
@@ -119,26 +130,6 @@
   - ntpd
   - NetworkManager
 #  - dnsmasq
-
-#- name: Reboot server
-#  shell: "sleep 3; /usr/sbin/shutdown -r now"
-#  async: 1
-#  poll: 0
-#  failed_when: false
-#  changed_when: true
-#  ignore_errors: true
-#  when: ansible_ssh_host != '127.0.0.1' and selinux.changed
-#
-#- name: Wait for reboot to start
-#  pause:
-#    seconds: 5
-#  when: selinux.changed
-#
-#- name: waiting for system to come online
-#  wait_for: host="{{ hostvars[inventory_hostname].ansible_host | default(inventory_hostname) }}" port="{{ hostvars[inventory_hostname].ansible_ssh_port | default('22') }}" search_regex=OpenSSH
-#  delegate_to: 127.0.0.1
-#  become: no
-#  when: inventory_hostname != '127.0.0.1' or hostvars[inventory_hostname].ansible_host != '127.0.0.1' and selinux.changed
 
 - name: reboot system
   reboot:

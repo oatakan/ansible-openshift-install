@@ -6,5 +6,13 @@
       when:
         - groups.windows is defined
         - inventory_hostname in groups.windows
+    - name: set default ip address for linux nodes
+      set_fact:
+        ansible_default_ipv4:
+          address: '{{ ansible_host }}'
+      when:
+        - groups.windows is defined
+        - inventory_hostname not in groups.windows
+        - ansible_host is defined
   roles:
     - hosts-file
