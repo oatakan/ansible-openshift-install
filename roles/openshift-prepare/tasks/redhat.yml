@@ -114,6 +114,7 @@
   lineinfile:
     path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
     line: '{{ item }}'
+  register: configure_networking
   loop:
     - 'NM_CONTROLLED=yes'
     - 'PEERDNS=yes'
@@ -134,7 +135,7 @@
 - name: reboot system
   reboot:
   when:
-    - selinux.changed
+    - selinux.changed or (configure_networking is defined and (True in configure_networking.results | map(attribute='changed')))
     - inventory_hostname != '127.0.0.1' or hostvars[inventory_hostname].ansible_host != '127.0.0.1'
 
 - name: unexclude atomic-openshift package for the duration of the install
