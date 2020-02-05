@@ -111,10 +111,12 @@
     state: enforcing
   register: selinux
 
-- name: configure networking
+- name: configure networking (1/2)
   lineinfile:
     path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
+    regexp: "^{{ item.split('=')[0] }}="
     line: '{{ item }}'
+    insertafter: '^IPADDR='
   register: configure_networking
   loop:
     - 'NM_CONTROLLED=yes'
