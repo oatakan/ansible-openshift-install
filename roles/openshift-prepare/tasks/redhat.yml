@@ -103,6 +103,7 @@
       - pip
       - setuptools
     state: latest
+  ignore_errors: yes
 
 - name: enable selinux
   selinux:
