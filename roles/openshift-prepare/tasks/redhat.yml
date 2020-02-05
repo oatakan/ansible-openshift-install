@@ -58,6 +58,18 @@
   retries: 5
   delay: 10
 
+- name: install dnsmasq
+  yum:
+    name: dnsmasq
+    state: present
+  register: install_dnsmasq
+  until: install_dnsmasq is success
+  retries: 5
+  delay: 10
+  when:
+    - openshift_use_dnsmasq is defined
+    - openshift_use_dnsmasq
+
 # this should be temporary fix
 - name: install openswitch 2.6.1 for origin release 3.10
   yum:
@@ -134,6 +146,15 @@
   - ntpd
   - NetworkManager
 #  - dnsmasq
+
+- name: enable and start dnsmasq
+  service:
+    name: dnsmasq
+    enabled: yes
+    state: started
+  when:
+    - openshift_use_dnsmasq is defined
+    - openshift_use_dnsmasq
 
 - name: reboot system
   reboot:
