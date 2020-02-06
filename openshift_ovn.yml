@@ -85,3 +85,23 @@
     - name: Create node daemonset
       shell: oc create -f /root/ovn-kubernetes/dist/yaml/ovnkube.yaml
       ignore_errors: yes
+
+    - name: wait for iptables to be reset
+      shell: iptables -L | grep 6641
+      register: wait_for_iptables
+      until: wait_for_iptables is not success
+      retries: 900
+      delay: 5
+
+    - name: open ports for ovn
+      iptables:
+        chain: INPUT
+        ctstate: NEW
+        jump: ACCEPT
+        destination_port: '{{ item }}'
+        protocol: tcp
+        match: state
+      loop:
+        - "6641"
+        - "6642"
+        - "6081"
