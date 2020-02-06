@@ -38,9 +38,9 @@
         protocol: tcp
         match: state
       loop:
-        - 6641
-        - 6642
-        - 6081
+        - "6641"
+        - "6642"
+        - "6081"
 
     - name: Save iptables rules
       shell: service iptables save
