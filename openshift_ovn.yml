@@ -89,6 +89,7 @@
     - name: wait for iptables to be reset
       shell: iptables -L | grep 6641
       register: wait_for_iptables
+      ignore_errors: yes
       until: wait_for_iptables.rc != 0
       retries: 900
       delay: 10
