@@ -31,7 +31,7 @@
 
     - name: open ports for ovn
       iptables:
-        chain: INPUT
+        chain: IN_public_allow
         ctstate: NEW
         jump: ACCEPT
         destination_port: '{{ item }}'
@@ -95,7 +95,7 @@
 
     - name: open ports for ovn
       iptables:
-        chain: INPUT
+        chain: IN_public_allow
         ctstate: NEW
         jump: ACCEPT
         destination_port: '{{ item }}'
