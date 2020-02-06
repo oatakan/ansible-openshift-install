@@ -123,7 +123,7 @@
     state: enforcing
   register: selinux
 
-- name: configure networking (1/2)
+- name: configure networking
   lineinfile:
     path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
     regexp: "^{{ item.split('=')[0] }}="

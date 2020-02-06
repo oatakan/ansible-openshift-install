@@ -22,8 +22,21 @@
       retries: 300
       delay: 5
 
-    - name: open firewall {{ item }}
-      shell: iptables -A IN_public_allow -p tcp -m state --state NEW -m tcp --dport {{ item }} -j ACCEPT
+#    - name: open firewall {{ item }}
+#      shell: iptables -A IN_public_allow -p tcp -m state --state NEW -m tcp --dport {{ item }} -j ACCEPT
+#      loop:
+#        - 6641
+#        - 6642
+#        - 6081
+
+    - name: open ports for ovn
+      iptables:
+        chain: INPUT
+        ctstate: NEW
+        jump: ACCEPT
+        destination_port: {{ item }}
+        protocol: tcp
+        match: state
       loop:
         - 6641
         - 6642
