@@ -34,7 +34,7 @@
         chain: INPUT
         ctstate: NEW
         jump: ACCEPT
-        destination_port: {{ item }}
+        destination_port: '{{ item }}'
         protocol: tcp
         match: state
       loop:
