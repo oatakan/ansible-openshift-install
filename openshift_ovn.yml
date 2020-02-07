@@ -25,21 +25,32 @@
 #        - 6642
 #        - 6081
 
+#    - name: open ports for ovn
+#      iptables:
+#        chain: IN_public_allow
+#        ctstate: NEW
+#        jump: ACCEPT
+#        destination_port: '{{ item }}'
+#        protocol: tcp
+#        match: state
+#      loop:
+#        - "6641"
+#        - "6642"
+#        - "6081"
+#
+#    - name: Save iptables rules
+#      shell: service iptables save
+
     - name: open ports for ovn
-      iptables:
-        chain: IN_public_allow
-        ctstate: NEW
-        jump: ACCEPT
-        destination_port: '{{ item }}'
-        protocol: tcp
-        match: state
+      firewalld:
+        zone: public
+        port: '{{ item }}/tcp'
+        permanent: yes
+        state: enabled
       loop:
         - "6641"
         - "6642"
         - "6081"
-
-    - name: Save iptables rules
-      shell: service iptables save
 
     - name: Remove OVS DB Content
       shell: rm -rf /var/lib/openvswitch/ovn*.db
@@ -87,7 +98,7 @@
           shell: iptables -L | grep 6641
           register: wait_for_iptables
           until: wait_for_iptables.rc != 0
-          retries: 900
+          retries: 200
           delay: 5
 
       rescue:
@@ -95,27 +106,48 @@
             msg: "iptables are reset..."
       always:
 
+#        - name: open ports for ovn
+#          iptables:
+#            chain: IN_public_allow
+#            ctstate: NEW
+#            jump: ACCEPT
+#            destination_port: '{{ item }}'
+#            protocol: tcp
+#            match: state
+#          loop:
+#            - "6641"
+#            - "6642"
+#            - "6081"
+#
+#        - name: open ports for dnsmasq
+#          iptables:
+#            chain: IN_public_allow
+#            ctstate: NEW,ESTABLISHED
+#            jump: ACCEPT
+#            destination_port: '53'
+#            protocol: '{{ item }}'
+#            match: state
+#          loop:
+#            - tcp
+#            - udp
+
         - name: open ports for ovn
-          iptables:
-            chain: IN_public_allow
-            ctstate: NEW
-            jump: ACCEPT
-            destination_port: '{{ item }}'
-            protocol: tcp
-            match: state
+          firewalld:
+            zone: public
+            port: '{{ item }}/tcp'
+            permanent: yes
+            state: enabled
           loop:
             - "6641"
             - "6642"
             - "6081"
 
         - name: open ports for dnsmasq
-          iptables:
-            chain: IN_public_allow
-            ctstate: NEW,ESTABLISHED
-            jump: ACCEPT
-            destination_port: '53'
-            protocol: '{{ item }}'
-            match: state
+          firewalld:
+            zone: public
+            port: '53/item'
+            permanent: yes
+            state: enabled
           loop:
             - tcp
             - udp

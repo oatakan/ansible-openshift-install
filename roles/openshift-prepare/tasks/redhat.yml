@@ -58,17 +58,17 @@
   retries: 5
   delay: 10
 
-- name: install dnsmasq
-  yum:
-    name: dnsmasq
-    state: present
-  register: install_dnsmasq
-  until: install_dnsmasq is success
-  retries: 5
-  delay: 10
-  when:
-    - openshift_use_dnsmasq is defined
-    - openshift_use_dnsmasq
+#- name: install dnsmasq
+#  yum:
+#    name: dnsmasq
+#    state: present
+#  register: install_dnsmasq
+#  until: install_dnsmasq is success
+#  retries: 5
+#  delay: 10
+#  when:
+#    - openshift_use_dnsmasq is defined
+#    - openshift_use_dnsmasq
 
 # this should be temporary fix
 - name: install openswitch 2.6.1 for origin release 3.10
@@ -123,19 +123,19 @@
     state: enforcing
   register: selinux
 
-#- name: configure networking
-#  lineinfile:
-#    path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
-#    regexp: "^{{ item.split('=')[0] }}="
-#    line: '{{ item }}'
-#    insertafter: '^IPADDR='
-#  register: configure_networking
-#  loop:
-#    - 'NM_CONTROLLED=yes'
-#    - 'PEERDNS=yes'
-#  when:
-#    - os_sdn_network_plugin_name == 'cni'
-#    - ansible_default_ipv4.interface is defined
+- name: configure networking
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
+    regexp: "^{{ item.split('=')[0] }}="
+    line: '{{ item }}'
+    insertafter: '^IPADDR='
+  register: configure_networking
+  loop:
+    - 'NM_CONTROLLED=yes'
+    - 'PEERDNS=yes'
+  when:
+    - os_sdn_network_plugin_name == 'cni'
+    - ansible_default_ipv4.interface is defined
 
 - name: enable and start services
   service:
@@ -147,14 +147,14 @@
   - NetworkManager
 #  - dnsmasq
 
-- name: enable and start dnsmasq
-  service:
-    name: dnsmasq
-    enabled: yes
-    state: started
-  when:
-    - openshift_use_dnsmasq is defined
-    - openshift_use_dnsmasq
+#- name: enable and start dnsmasq
+#  service:
+#    name: dnsmasq
+#    enabled: yes
+#    state: started
+#  when:
+#    - openshift_use_dnsmasq is defined
+#    - openshift_use_dnsmasq
 
 - name: reboot system
   reboot:
