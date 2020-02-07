@@ -92,8 +92,11 @@
           register: wait_for_iptables
           until: wait_for_iptables.rc != 0
           retries: 900
-          delay: 10
+          delay: 5
 
+      rescue:
+        - debug:
+            msg: "iptables are reset..."
       always:
 
         - name: open ports for ovn
@@ -108,3 +111,15 @@
             - "6641"
             - "6642"
             - "6081"
+
+        - name: open ports for dnsmasq
+          iptables:
+            chain: IN_public_allow
+            ctstate: NEW,ESTABLISHED
+            jump: ACCEPT
+            destination_port: '53'
+            protocol: '{{ item }}'
+            match: state
+          loop:
+            - tcp
+            - udp
