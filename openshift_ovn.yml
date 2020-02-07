@@ -11,32 +11,12 @@
         path: /root/.kube/config
         timeout: 36000
 
-#    - name: sleep for 400s
-#      pause:
-#        seconds: 400
-
     - name: wait for API response
       shell: oc whoami | grep -m 1 "system:admin"
       register: wait_for_api
       until: wait_for_api is success
       retries: 300
       delay: 5
-
-    - block:
-        - name: wait for router to be running
-          shell: oc get deploymentconfig.apps.openshift.io/router -n default -o json
-          register: oc_get_dc_router
-          until:
-            - oc_get_dc_router is success
-            - oc_get_dc_router.stdout is defined
-            - (oc_get_dc_router.stdout | from_json) is defined
-            - (oc_get_dc_router.stdout | from_json).availableReplicas is defined
-            - ((oc_get_dc_router.stdout | from_json).availableReplicas | int) > 0
-          retries: 10
-          delay: 5
-      rescue:
-        - debug:
-            msg: "ignoring router check"
 
 #    - name: open firewall {{ item }}
 #      shell: iptables -A IN_public_allow -p tcp -m state --state NEW -m tcp --dport {{ item }} -j ACCEPT
