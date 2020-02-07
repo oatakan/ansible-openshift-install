@@ -1,0 +1,11 @@
+- name: undeploy cluster on vmware
+  hosts: all
+  become: no
+  gather_facts: no
+  connection: local
+  vars_files:
+    - node-config/nodes-vmware.yml
+  roles:
+    - role: ansible-role-vmware
+      role_action: deprovision
+      delegate_to: localhost
