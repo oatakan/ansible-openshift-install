@@ -123,19 +123,19 @@
     state: enforcing
   register: selinux
 
-- name: configure networking
-  lineinfile:
-    path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
-    regexp: "^{{ item.split('=')[0] }}="
-    line: '{{ item }}'
-    insertafter: '^IPADDR='
-  register: configure_networking
-  loop:
-    - 'NM_CONTROLLED=yes'
-    - 'PEERDNS=yes'
-  when:
-    - os_sdn_network_plugin_name == 'cni'
-    - ansible_default_ipv4.interface is defined
+#- name: configure networking
+#  lineinfile:
+#    path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
+#    regexp: "^{{ item.split('=')[0] }}="
+#    line: '{{ item }}'
+#    insertafter: '^IPADDR='
+#  register: configure_networking
+#  loop:
+#    - 'NM_CONTROLLED=yes'
+#    - 'PEERDNS=yes'
+#  when:
+#    - os_sdn_network_plugin_name == 'cni'
+#    - ansible_default_ipv4.interface is defined
 
 - name: enable and start services
   service:
