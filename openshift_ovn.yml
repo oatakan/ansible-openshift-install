@@ -145,7 +145,7 @@
         - name: open ports for dnsmasq
           firewalld:
             zone: public
-            port: '53/item'
+            port: '53/{{ item }}'
             permanent: yes
             state: enabled
           loop:
