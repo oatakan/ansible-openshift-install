@@ -1,0 +1,11 @@
+- name: deploy cluster on ovirt
+  hosts: localhost
+  become: no
+  gather_facts: no
+  connection: local
+  vars:
+    target_ovirt: ovirt-70
+  vars_files:
+    - node-config/nodes-{{ target_ovirt }}.yml
+  roles:
+    - ansible-role-ovirt
