@@ -1,0 +1,95 @@
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: skydns
+  namespace: ovn-kubernetes
+  annotations:
+    kubernetes.io/description: |
+      This daemon set launches the OpenShift networking components (skydns).
+      It expects that OVN is running on the node.
+    image.openshift.io/triggers: |
+      [
+        {"from":{"kind":"ImageStreamTag","name":"node:v3.11"},"fieldPath":"spec.template.spec.containers[?(@.name==\"skydns\")].image"}
+      ]
+spec:
+  selector:
+    matchLabels:
+      app: ovs
+  updateStrategy:
+    type: OnDelete
+  template:
+    metadata:
+      labels:
+        app: ovs
+        component: network
+        type: infra
+        openshift.io/component: network
+    spec:
+      # Requires fairly broad permissions - ability to read all services and network functions as well
+      # as all pods.
+      serviceAccountName: ovn
+      hostNetwork: true
+      hostPID: true
+      containers:
+      # The network container launches skydns local DNS service.
+      # It relies on an up to date node-config.yaml being present.
+      - name: skydns
+        image: " "
+        command:
+        - /bin/bash
+        - -c
+        - |
+          #!/bin/bash
+          set -euo pipefail
+
+          # if the node config doesn't exist yet, wait until it does
+          retries=0
+          while true; do
+            if [[ ! -f /etc/origin/node/node-config.yaml ]]; then
+              echo "warning: Cannot find existing node-config.yaml, waiting 15s ..." 2>&1
+              sleep 15 & wait
+              (( retries += 1 ))
+            else
+              break
+            fi
+            if [[ "${retries}" -gt 40 ]]; then
+              echo "error: No existing node-config.yaml, exiting" 2>&1
+              exit 1
+            fi
+          done
+
+          # Launch the network process (dns only)
+          exec openshift start network --enable=dns --config=/etc/origin/node/node-config.yaml --loglevel=${DEBUG_LOGLEVEL:-2}
+
+        securityContext:
+          runAsUser: 0
+          # Permission could be reduced by selecting an appropriate SELinux policy
+          privileged: true
+
+        volumeMounts:
+        # Directory which contains the host configuration.
+        - mountPath: /etc/origin/node/
+          name: host-config
+          readOnly: true
+        - mountPath: /var/run
+          name: host-var-run
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        env:
+        - name: OPENSHIFT_DNS_DOMAIN
+          value: cluster.local
+        tolerations:
+        - operator: "Exists"
+
+      volumes:
+      - name: host-config
+        hostPath:
+          path: /etc/origin/node
+      - name: host-var-run
+        hostPath:
+          path: /var/run
+      tolerations:
+      - operator: "Exists"
