@@ -146,13 +146,22 @@
             Throw "Failed to set failure flags"
         }
         Start-Service $DOCKER_SERVICE_NAME
-    - name: Windows | Remove old Bin and K directories if it exists
-      win_file:
-        path: "{{ item }}"
-        state: absent
-      with_items:
-        - "{{ bin_dir_path }}"
-        - "{{ k_dir_path }}"
+    - block:
+        - name: Windows | Remove old Bin and K directories if it exists
+          win_file:
+            path: "{{ item }}"
+            state: absent
+          with_items:
+            - "{{ bin_dir_path }}"
+            - "{{ k_dir_path }}"
+      rescue:
+        - name: ensure kubelet and kubeovn services are stopped
+          win_service:
+            name: "{{ item }}"
+            state: stopped
+          loop:
+            - ocpkubelet
+            - kubeovn
     - name: Windows | Create Bin and K directories
       win_file:
         path: "{{ item }}"
