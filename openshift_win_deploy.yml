@@ -565,12 +565,14 @@
 
 - hosts: masters[0]
   gather_facts: no
+  become: yes
   tasks:
-    - name: Make sure there cni directory locally
+    - name: Make sure there cni directory exist locally
       file:
         path: "{{ playbook_dir }}/cni/bin"
         state: directory
       delegate_to: localhost
+      become: no
 
     - name: copy ovn-k8s-cni-overlay.exe
       fetch:
