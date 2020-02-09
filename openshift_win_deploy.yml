@@ -162,6 +162,15 @@
           loop:
             - ocpkubelet
             - kubeovn
+
+        - name: Windows | Remove old Bin and K directories if it exists
+          win_file:
+            path: "{{ item }}"
+            state: absent
+          with_items:
+            - "{{ bin_dir_path }}"
+            - "{{ k_dir_path }}"
+
     - name: Windows | Create Bin and K directories
       win_file:
         path: "{{ item }}"
