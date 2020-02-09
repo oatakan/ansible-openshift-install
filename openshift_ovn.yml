@@ -2,3 +2,16 @@
   become: yes
   roles:
     - openshift-ovn
+
+- hosts: nodes
+  become: yes
+  tasks:
+    - name: open ports for dnsmasq
+      firewalld:
+        zone: public
+        port: '53/{{ item }}'
+        permanent: yes
+        state: enabled
+      loop:
+        - tcp
+        - udp
