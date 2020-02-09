@@ -159,6 +159,7 @@
           win_service:
             name: "{{ item }}"
             state: stopped
+            force_dependent_services: yes
           loop:
             - ocpkubelet
             - kubeovn
