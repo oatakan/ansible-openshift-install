@@ -431,7 +431,7 @@
     - name: Copy kubernetes bin directory
       win_copy:
         src: C:\Windows\Temp\kubernetes\node\bin
-        dest: C:\bin
+        dest: C:\
         remote_src: yes
 
 #    - name: Move the kube to bin
