@@ -256,13 +256,13 @@
       delegate_to: "{{ groups.masters | first }}"
 
     - name: Create Config
-      shell: oc adm create-node-config --hostnames={{inventory_hostname}} --node={{inventory_hostname}} --node-dir=/etc/origin/generated-configs/{{inventory_hostname}}
+      shell: oc adm create-node-config --hostnames={{ inventory_hostname }} --node={{ inventory_hostname }} --node-dir=/etc/origin/generated-configs/{{ inventory_hostname }}
       args:
         chdir: /etc/origin/
       delegate_to: "{{ groups.masters | first }}"
     - name: Create node definition
       copy:
-        dest: /etc/origin/generated-configs/{{inventory_hostname}}/{{inventory_hostname}}_definition.yaml
+        dest: /etc/origin/generated-configs/{{ inventory_hostname }}/{{ inventory_hostname }}_definition.yaml
         content: |
           apiVersion: v1
           kind: Node
@@ -271,23 +271,23 @@
              labels:
                beta.kubernetes.io/arch: amd64
                beta.kubernetes.io/os: windows
-               kubernetes.io/hostname: {{inventory_hostname_short}}
+               kubernetes.io/hostname: {{ inventory_hostname_short }}
              name: {{inventory_hostname_short}}
-             selfLink: /api/v1/nodes/{{inventory_hostname_short}}
+             selfLink: /api/v1/nodes/{{ inventory_hostname_short }}
           spec: {}
 
       delegate_to: "{{ groups.masters | first }}"
     - name: Define Node to Openshift
-      shell: oc create -f /etc/origin/generated-configs/{{inventory_hostname}}/{{inventory_hostname}}_definition.yaml
+      shell: oc create -f /etc/origin/generated-configs/{{ inventory_hostname }}/{{ inventory_hostname }}_definition.yaml
       ignore_errors: yes
       delegate_to: "{{ groups.masters | first }}"
     - name: Get Node Subnet
-      shell: oc get node {{inventory_hostname_short}} --output=json | jq .metadata.annotations.ovn_host_subnet > /etc/origin/generated-configs/{{inventory_hostname}}/host.subnet
+      shell: oc get node {{ inventory_hostname_short }} --output=json | jq .metadata.annotations.ovn_host_subnet > /etc/origin/generated-configs/{{ inventory_hostname }}/host.subnet
       delegate_to: "{{ groups.masters | first }}"
     - name: Create archives per host
       archive:
-        path: /etc/origin/generated-configs/{{inventory_hostname}}/*
-        dest: /etc/origin/generated-configs/{{inventory_hostname}}.zip
+        path: /etc/origin/generated-configs/{{ inventory_hostname }}/*
+        dest: /etc/origin/generated-configs/{{ inventory_hostname }}.zip
         format: zip
       delegate_to: "{{ groups.masters | first }}"
 
@@ -540,11 +540,11 @@
   serial: 1
   tasks:
     - name: Create the master directory
-      file: path="{{playbook_dir}}/{{ ansible_hostname }}" state=directory
+      file: path="{{ playbook_dir }}/{{ ansible_hostname }}" state=directory
       delegate_to: localhost
     - name: Create ovn_k8s.conf
       blockinfile:
-        dest: "{{playbook_dir}}/{{ ansible_hostname }}/ovn_k8s.conf"
+        dest: "{{ playbook_dir }}/{{ ansible_hostname }}/ovn_k8s.conf"
         create: yes
         block: |
           [default]
@@ -565,15 +565,18 @@
 
 - hosts: masters[0]
   gather_facts: no
+  become: yes
   tasks:
     - name: Make sure bastion has exe dir
       file: path=/root/cni/bin state=directory
+
     - name: copy ovn-k8s-cni-overlay.exe
       fetch:
         src: /root/ovn-kubernetes/go-controller/_output/go/windows/ovn-k8s-cni-overlay.exe
         dest: /root/cni/bin/ovn-k8s-cni-overlay.exe
         force: yes
         flat: yes
+
     - name: copy ovn ovnkube.exe
       fetch:
         src: /root/ovn-kubernetes/go-controller/_output/go/windows/ovnkube.exe
@@ -599,12 +602,12 @@
 
     - name: Copy ovn_k8s.conf to cni directory
       win_copy:
-        src: "{{playbook_dir}}/{{ansible_hostname}}/ovn_k8s.conf"
+        src: "{{ playbook_dir }}/{{ ansible_hostname }}/ovn_k8s.conf"
         dest: C:\cni\ovn_k8s.conf
         force: yes
     - name: Copy ovn_k8s.conf to windows nodes
       win_copy:
-        src: "{{playbook_dir}}/{{ansible_hostname}}/ovn_k8s.conf"
+        src: "{{ playbook_dir }}/{{ ansible_hostname }}/ovn_k8s.conf"
         dest: C:\Program Files\Cloudbase Solutions\Open vSwitch\conf\ovn_k8s.conf
         force: yes
     - name: copy ovn-k8s-cni-overlay.exe
