@@ -761,8 +761,8 @@
       pause:
         minutes: 1
     - name: Add windows node label (compute=true)
-      shell: oc label node "{{inventory_hostname_short}}" node-role.kubernetes.io/compute=true
-      delegate_to: masters[0]
+      shell: oc label node "{{inventory_hostname_short}}" node-role.kubernetes.io/compute=true --overwrite
+      delegate_to: groups.masters[0]
       become: yes
       retries: 10
       delay: 20
