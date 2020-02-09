@@ -207,19 +207,40 @@
       retries: 5
       delay: 5
       ignore_errors: yes
-    - name: Windows | Pull down Hybrid Git directory in zip format
-      win_shell: curl.exe -L -k {{ openshift_windows_git_url }}/archive/master.zip -o $env:TEMP\openshift-windows.zip
-      retries: 5
-      delay: 5
+
+#    - name: Windows | Pull down Hybrid Git directory in zip format
+#      win_shell: curl.exe -L -k {{ openshift_windows_git_url }}/archive/master.zip -o $env:TEMP\openshift-windows.zip
+#      retries: 5
+#      delay: 5
+
+    - name: Windows | Download the kubernetes node file
+      win_get_url:
+        url: "{{ openshift_windows_git_url }}/archive/master.zip"
+        dest: C:\Windows\Temp\openshift-windows.zip
+        validate_certs: no
+        follow_redirects: all
+
+#    - name: Windows | Extract Hybrid zip
+#      win_shell: |
+#        $ErrorActionPreference = "Stop"
+#        Expand-Archive $env:TEMP\openshift-windows.zip -DestinationPath $env:TEMP
+#        Move-Item -Path ${env:TEMP}\openshift-windows-master\* -Destination {{ k_dir_path }}\hybrid\ -Force
+#        Remove-Item -Force -Path $env:TEMP\openshift-windows.zip -ErrorAction SilentlyContinue
+#        Remove-Item -Recurse -Force -Path ${env:TEMP}\openshift-windows-master -ErrorAction SilentlyContinue
+
+    - name: Windows | Ensure hyrid dir exists
+      win_file:
+        path: '{{ k_dir_path }}\hybrid'
+        state: directory
+
     - name: Windows | Extract Hybrid zip
-      win_shell: |
-        $ErrorActionPreference = "Stop"
-        Expand-Archive $env:TEMP\openshift-windows.zip -DestinationPath $env:TEMP
-        Move-Item -Path ${env:TEMP}\openshift-windows-master\* -Destination {{ k_dir_path }}\hybrid\ -Force
-        Remove-Item -Force -Path $env:TEMP\openshift-windows.zip -ErrorAction SilentlyContinue
-        Remove-Item -Recurse -Force -Path ${env:TEMP}\openshift-windows-master -ErrorAction SilentlyContinue
+      win_unzip:
+        src: C:\Windows\Temp\openshift-windows.zip
+        dest: '{{ k_dir_path }}\hybrid'
+
     - name: Expand System Disk
       win_shell: '& "{{ k_dir_path }}\hybrid\3.11\bin\expand_disk.ps1"'
+
     - name: Windows | Pull OpenvSwitch
       win_shell: curl.exe -L {{ openvswitch_installer_url }} -o $env:TEMP\openvswitch.msi
       retries: 5
