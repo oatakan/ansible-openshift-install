@@ -565,22 +565,24 @@
 
 - hosts: masters[0]
   gather_facts: no
-  become: yes
   tasks:
-    - name: Make sure bastion has exe dir
-      file: path=/root/cni/bin state=directory
+    - name: Make sure there cni directory locally
+      file:
+        path: "{{ playbook_dir }}/cni/bin"
+        state: directory
+      delegate_to: localhost
 
     - name: copy ovn-k8s-cni-overlay.exe
       fetch:
         src: /root/ovn-kubernetes/go-controller/_output/go/windows/ovn-k8s-cni-overlay.exe
-        dest: /root/cni/bin/ovn-k8s-cni-overlay.exe
+        dest: "{{ playbook_dir }}/cni/bin/ovn-k8s-cni-overlay.exe"
         force: yes
         flat: yes
 
     - name: copy ovn ovnkube.exe
       fetch:
         src: /root/ovn-kubernetes/go-controller/_output/go/windows/ovnkube.exe
-        dest: /root/cni/bin/ovnkube.exe
+        dest: "{{ playbook_dir }}/cni/bin/ovnkube.exe"
         force: yes
         flat: yes
 
@@ -593,6 +595,7 @@
         path: C:\cni
         state: directory
         ignore_errors: yes
+
     - name: Create 10-ovn-kubernetes.conf
       win_copy:
         dest: c:\cni\10-ovn-kubernetes.conf
@@ -605,19 +608,22 @@
         src: "{{ playbook_dir }}/{{ ansible_hostname }}/ovn_k8s.conf"
         dest: C:\cni\ovn_k8s.conf
         force: yes
+
     - name: Copy ovn_k8s.conf to windows nodes
       win_copy:
         src: "{{ playbook_dir }}/{{ ansible_hostname }}/ovn_k8s.conf"
         dest: C:\Program Files\Cloudbase Solutions\Open vSwitch\conf\ovn_k8s.conf
         force: yes
+
     - name: copy ovn-k8s-cni-overlay.exe
       win_copy:
-        src: /root/cni/bin/ovn-k8s-cni-overlay.exe
+        src: "{{ playbook_dir }}/cni/bin/ovn-k8s-cni-overlay.exe"
         dest: /bin/ovn-k8s-cni-overlay.exe
         force: yes
+
     - name: copy ovn ovnkube.exe
       win_copy:
-        src: /root/cni/bin/ovnkube.exe
+        src: "{{ playbook_dir }}/cni/bin/ovnkube.exe"
         dest: /bin/ovnkube.exe
         force: yes
 
