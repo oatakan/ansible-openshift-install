@@ -216,7 +216,7 @@
     - name: Windows | Download the kubernetes node file
       win_get_url:
         url: "{{ openshift_windows_git_url }}/archive/master.zip"
-        dest: C:\Windows\Temp\openshift-windows.zip
+        dest: C:\Windows\Temp\openshift-windows-master.zip
         validate_certs: no
         follow_redirects: all
 
@@ -230,11 +230,11 @@
 
     - name: Windows | Extract Hybrid zip
       win_unzip:
-        src: C:\Windows\Temp\openshift-windows.zip
+        src: C:\Windows\Temp\openshift-windows-master.zip
         dest: '{{ k_dir_path }}'
 
     - name: Windows | Rename to Hybrid directory
-      win_shell: Rename-Item -Path '{{ k_dir_path }}\openshift-windows' -NewName hybrid -ErrorAction SilentlyContinue
+      win_shell: Rename-Item -Path '{{ k_dir_path }}\openshift-windows-master' -NewName hybrid -ErrorAction SilentlyContinue
 
     - name: Windows | Expand System Disk
       win_shell: '& "{{ k_dir_path }}\hybrid\3.11\bin\expand_disk.ps1"'
