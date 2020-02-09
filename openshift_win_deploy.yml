@@ -228,17 +228,15 @@
 #        Remove-Item -Force -Path $env:TEMP\openshift-windows.zip -ErrorAction SilentlyContinue
 #        Remove-Item -Recurse -Force -Path ${env:TEMP}\openshift-windows-master -ErrorAction SilentlyContinue
 
-    - name: Windows | Ensure hyrid dir exists
-      win_file:
-        path: '{{ k_dir_path }}\hybrid'
-        state: directory
-
     - name: Windows | Extract Hybrid zip
       win_unzip:
         src: C:\Windows\Temp\openshift-windows.zip
-        dest: '{{ k_dir_path }}\hybrid'
+        dest: '{{ k_dir_path }}'
 
-    - name: Expand System Disk
+    - name: Windows | Rename to Hybrid directory
+      win_shell: Rename-Item -Path '{{ k_dir_path }}\openshift-windows' -NewName hybrid -ErrorAction SilentlyContinue
+
+    - name: Windows | Expand System Disk
       win_shell: '& "{{ k_dir_path }}\hybrid\3.11\bin\expand_disk.ps1"'
 
     - name: Windows | Pull OpenvSwitch
