@@ -9,15 +9,14 @@ Param(
 
 $ErrorActionPreference = "Stop"
 
-function Set-StaticIPAddress {
+function Set-StaticIPAddress($interfaceName) {
     $IP = $currentIPAddress
     $MaskBits = 24
     $Gateway = $currentGW
     $Dns = $currentDNS
     $IPType = "IPv4"
 
-    $primaryIfIndex = (Get-NetRoute -DestinationPrefix "0.0.0.0/0").ifIndex
-    $mainInterface = Get-NetAdapter -InterfaceIndex $primaryIfIndex
+    $mainInterface = Get-NetAdapter -Name $interfaceName
 
     # Remove any existing IP, gateway from our ipv4 adapter
     If (($mainInterface | Get-NetIPConfiguration).IPv4Address.IPAddress) {
@@ -111,7 +110,7 @@ try {
     }
     Enable-OVSOnHNSNetwork $net.ID
 
-    Set-StaticIPAddress
+    Set-StaticIPAddress $bridgeName
 
     Set-Service "ovs-vswitchd" -StartupType Automatic
     Start-Service "ovs-vswitchd"

@@ -3,6 +3,7 @@
 - name: Create the master directory
   file: path="{{ playbook_dir }}/{{ ansible_hostname }}" state=directory
   delegate_to: localhost
+
 - name: Create ovn_k8s.conf
   blockinfile:
     dest: "{{ playbook_dir }}/{{ ansible_hostname }}/ovn_k8s.conf"
