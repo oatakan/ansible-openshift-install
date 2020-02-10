@@ -18,7 +18,8 @@
   tasks:
     - include_role:
         name: openshift-win-node-config
-      delegate_to: "{{ groups.masters | first }}"
+        apply:
+          delegate_to: "{{ groups.masters | first }}"
 
 - hosts: masters[0]
   become: yes
