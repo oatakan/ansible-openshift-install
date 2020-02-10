@@ -1,0 +1,31 @@
+---
+
+- name: Setup local origin structure
+  file:
+    path: '{{ playbook_dir }}/generated-configs'
+    state: directory
+  delegate_to: localhost
+  become: no
+
+- name: Extract configs
+  unarchive:
+    src: '{{ playbook_dir }}/generated-configs.tgz'
+    dest: '{{ playbook_dir }}/generated-configs'
+  delegate_to: localhost
+  become: no
+
+#- name: Fix the access mode
+#  file:
+#    path: '{{ playbook_dir }}/generated-configs'
+#    owner: "{{ user }}"
+#    recurse: yes
+#  ignore_errors: yes
+#  delegate_to: localhost
+#  become: no
+
+- name: Create windows directory for node files
+  file:
+    path: '{{ playbook_dir }}/generated-configs/node-{{ groups.masters | first }}/windows'
+    state: directory
+  delegate_to: localhost
+  become: no

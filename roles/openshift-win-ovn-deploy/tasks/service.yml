@@ -1,0 +1,34 @@
+---
+
+- name: Setup Kubeovn Service
+  win_shell: setup_kubeovn_service.ps1
+  args:
+    chdir: \k\hybrid\3.11\bin
+
+- name: Setup Kubelet Service
+  win_shell: setup_kubelet_service.ps1
+  args:
+    chdir: \k\hybrid\3.11\bin
+
+- name: Enable kubeovn
+  win_shell: Set-Service kubeovn -StartupType Automatic
+
+- name: Start kubeovn
+  win_shell: Start-Service kubeovn
+
+- name: Enable kubelet
+  win_shell: Set-Service ocpkubelet -StartupType Automatic
+
+- name: Start kubelet
+  win_shell: Start-Service ocpkubelet
+
+- name: Sleep a while to make sure kubelet is up
+  pause:
+    minutes: 1
+
+- name: Add windows node label (compute=true)
+  shell: oc label node "{{inventory_hostname_short}}" node-role.kubernetes.io/compute=true --overwrite
+  delegate_to: groups.masters[0]
+  become: yes
+  retries: 10
+  delay: 20

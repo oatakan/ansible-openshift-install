@@ -1,0 +1,32 @@
+---
+
+- name: Create a archive of the node configs
+  archive:
+    path: /etc/origin/generated-configs/*
+    dest:  /etc/origin/generated-configs.tgz
+    mode:  666
+
+- name: Move the configs to local
+  fetch:
+    src:  /etc/origin/generated-configs.tgz
+    dest: generated-configs.tgz
+    flat: yes
+
+- name: Create the ovn scc account
+  shell: oc create serviceaccount ovn
+  ignore_errors: yes
+
+- name: add scc privileged for ovn
+  shell: oc adm policy add-scc-to-user privileged -z ovn
+
+- name: Add the cluster role
+  shell: oc adm policy add-cluster-role-to-user cluster-admin -z ovn
+
+- name: Save the token for later usage
+  shell: oc sa get-token ovn
+  register: ovn_key
+
+#    - name: create ovn token file
+#      copy:
+#        content: "{{ ovn_key.stdout }}"
+#        dest: "{{playbook_dir}}/ovn.token"

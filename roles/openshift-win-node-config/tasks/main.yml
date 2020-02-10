@@ -1,0 +1,47 @@
+---
+
+#    - name: set up environment
+#      shell: ln -f -s -n /etc/origin/ openshift.local.config
+#      args:
+#         chdir: /etc/origin
+#      delegate_to: "{{ groups.masters | first }}"
+
+- name: Create a local config sym link
+  file:
+    src: /etc/origin
+    dest: /etc/origin/openshift.local.config
+    state: link
+
+- name: Create Config
+  shell: oc adm create-node-config --hostnames={{ inventory_hostname }} --node={{ inventory_hostname }} --node-dir=/etc/origin/generated-configs/{{ inventory_hostname }}
+  args:
+    chdir: /etc/origin/
+
+- name: Create node definition
+  copy:
+    dest: /etc/origin/generated-configs/{{ inventory_hostname }}/{{ inventory_hostname }}_definition.yaml
+    content: |
+      apiVersion: v1
+      kind: Node
+      metadata:
+         annotations:
+         labels:
+           beta.kubernetes.io/arch: amd64
+           beta.kubernetes.io/os: windows
+           kubernetes.io/hostname: {{ inventory_hostname_short }}
+         name: {{inventory_hostname_short}}
+         selfLink: /api/v1/nodes/{{ inventory_hostname_short }}
+      spec: {}
+
+- name: Define Node to Openshift
+  shell: oc create -f /etc/origin/generated-configs/{{ inventory_hostname }}/{{ inventory_hostname }}_definition.yaml
+  ignore_errors: yes
+
+- name: Get Node Subnet
+  shell: oc get node {{ inventory_hostname_short }} --output=json | jq .metadata.annotations.ovn_host_subnet > /etc/origin/generated-configs/{{ inventory_hostname }}/host.subnet
+
+- name: Create archives per host
+  archive:
+    path: /etc/origin/generated-configs/{{ inventory_hostname }}/*
+    dest: /etc/origin/generated-configs/{{ inventory_hostname }}.zip
+    format: zip

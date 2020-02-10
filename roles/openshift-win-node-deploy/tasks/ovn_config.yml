@@ -1,0 +1,25 @@
+---
+
+- name: Create the master directory
+  file: path="{{ playbook_dir }}/{{ ansible_hostname }}" state=directory
+  delegate_to: localhost
+- name: Create ovn_k8s.conf
+  blockinfile:
+    dest: "{{ playbook_dir }}/{{ ansible_hostname }}/ovn_k8s.conf"
+    create: yes
+    block: |
+      [default]
+      encap-ip="{{ hostvars[groups.masters[0]].ansible_host }}"
+
+      [kubernetes]
+      apiserver="{{ hostvars[groups.masters[0]].api_url.stdout }}"  # kubernetes api server, or the load balanced address for the multiple api server case
+      token="{{ hostvars[groups.masters[0]].ovn_key.stdout }}"
+      cacert=/k/ca.crt
+
+      [ovnnorth]
+      address="tcp://{{ hostvars[groups.masters[0]].ansible_host }}:6641" # this master machine's IP address
+
+      [ovnsouth]
+      address="tcp://{{ hostvars[groups.masters[0]].ansible_host }}:6642"
+
+  delegate_to: localhost

@@ -1,0 +1,72 @@
+---
+
+- name: Windows | Copy setup_sdn.ps1
+  win_copy:
+    src: setup_sdn.ps1
+    dest: '{{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.ps1'
+
+- name: Windows | Prepare Windows scheduled tasks for the SDN setup
+  win_scheduled_task:
+    name: "setup_sdn"
+    actions:
+      - path: powershell.exe
+        arguments: >
+          -ExecutionPolicy Unrestricted -NonInteractive -Command
+          "& '{{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.ps1' -OVSNetworkName {{ ovs_network_name }}
+          -SubnetFile {{ k_dir_path }}\host.subnet 2>&1 > '{{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.log';
+          Write-Output $LASTEXITCODE > {{ k_dir_path }}\hybrid\3.11\bin\setup_sdn.status"
+    triggers:
+      - type: boot
+        enabled: true
+    username: SYSTEM
+
+- name: Windows | Setup Windows SDN
+  win_shell: Start-ScheduledTask -TaskName "setup_sdn"
+
+- name: Windows | Wait for Windows SDN setup
+  wait_for_connection:
+    # Allow 60 seconds for the setup_sdn task to finish. Connection will
+    # temporarily drop during this period of time.
+    delay: 60
+    # Maximum of 10 minutes allowed timeout.
+    timeout: 600
+
+- name: Windows | Check Windows SDN setup task
+  win_shell: |
+    $ErrorActionPreference = "Stop"
+    $taskName = "setup_sdn"
+    if((Get-ScheduledTask -TaskName $taskName).State -ne 'Ready') {
+        Throw "The scheduled task $taskName is not ready"
+    }
+    Write-Output "The scheduled task is ready"
+    $statusFile = "{{ k_dir_path }}\hybrid\3.11\bin\${taskName}.status"
+    if(!(Test-Path $statusFile)) {
+        Write-Output "Status file doesn't exist. Skipping"
+        exit 0
+    }
+    $exitCode = Get-Content $statusFile
+    if($exitCode -ne 0) {
+        Throw "Scheduled task ${taskName} returned with error"
+    }
+    Write-Output "Scheduled task ${taskName} returned with success"
+
+- name: Windows | Clean up Windows SDN setup task
+  win_scheduled_task:
+    name: "setup_sdn"
+    state: absent
+
+- name: Windows | Restart the Docker service
+  win_service:
+    name: Docker
+    state: restarted
+
+- name: Windows | Check if the HNS network for OVS is available in the Docker API
+  win_shell: |
+    $ErrorActionPreference = "Stop"
+    $net = docker.exe network ls --quiet --filter name={{ ovs_network_name }} --filter driver=transparent
+    if($LASTEXITCODE) {
+        Throw "Failed to list the Docker networks"
+    }
+    if(!$net) {
+        Throw "The HNS network for OVS is not available in the Docker API"
+    }

@@ -1,0 +1,12 @@
+---
+
+- name: Pull down windowsservercore 1809/Windows 2019 (Note this may take a long time)
+  win_shell: docker image pull mcr.microsoft.com/windows/servercore:1809
+  async: 50000
+  poll: 5
+- name: Tag The image
+  win_shell: docker tag mcr.microsoft.com/windows/servercore:1809  microsoft/windowsservercore:latest
+- name: Build the pause windows container
+  win_shell: docker build . -t kubeletwin/pause
+  args:
+    chdir: '{{ k_dir_path }}\hybrid\3.11'

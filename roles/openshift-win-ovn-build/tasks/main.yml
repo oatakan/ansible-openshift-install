@@ -1,0 +1,47 @@
+---
+
+- name: Get server url
+  shell: "oc whoami --show-server"
+  register: api_url
+
+#    - name: create api host file
+#      copy:
+#        content: "{{ api_url.stdout }}"
+#        dest: "{{ playbook_dir }}/api_host.txt"
+
+- name: Patch openshift-node/sync to only be on linux nodes
+  shell: oc patch namespace openshift-node -p '{"metadata":{"annotations":{"openshift.io/node-selector":"beta.kubernetes.io/os=linux"}}}'
+
+- name: copy kube config to a variable
+  slurp:
+    src: /root/.kube/config
+  register: kube_config
+
+- name: Ensure go is installed
+  yum:
+    name: golang
+    enablerepo: rhel-7-server-optional-rpms
+
+#    - name: Clear previous build if it exists
+#      file:
+#        path: ~/ovn-kubernetes
+#        state: absent
+
+#    - name: Clone to ovn-kubernetes repo
+#      shell: git clone https://github.com/glennswest/ovn-kubernetes  ~/ovn-kubernetes
+
+- name: Clone ovn-kubernetes repo
+  git:
+    repo: https://github.com/glennswest/ovn-kubernetes
+    dest: /root/ovn-kubernetes
+
+#    - name: Build The Controller (Windows)
+#      shell: cd ~/ovn-kubernetes;cd go-controller;make clean;make windows
+
+- name: Build the Controller (Windows)
+  make:
+    chdir: /root/ovn-kubernetes/go-controller
+    target: "{{ item }}"
+  loop:
+    - clean
+    - windows

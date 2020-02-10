@@ -1,0 +1,7 @@
+---
+
+windows_docker_version: "18.03.1-ee-3"
+bin_dir_path: C:\bin
+k_dir_path: C:\k
+openvswitch_installer_url: https://cloudbase.it/downloads/openvswitch-hyperv-installer-beta.msi
+openshift_windows_git_url: https://github.com/openshift/openshift-windows
