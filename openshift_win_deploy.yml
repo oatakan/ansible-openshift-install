@@ -31,7 +31,6 @@
 
 - hosts: windows
   become: no
-  gather_facts: no
   serial: 1
   roles:
     - openshift-win-node-deploy
