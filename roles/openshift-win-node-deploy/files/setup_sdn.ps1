@@ -27,11 +27,7 @@ function Set-StaticIPAddress {
      $mainInterface | Remove-NetRoute -AddressFamily $IPType -Confirm:$false
     }
      # Configure the IP address and default gateway
-    $mainInterface | New-NetIPAddress `
-     -AddressFamily $IPType `
-     -IPAddress $IP `
-     -PrefixLength $MaskBits `
-     -DefaultGateway $Gateway
+    $mainInterface | New-NetIPAddress -AddressFamily $IPType -IPAddress $IP -PrefixLength $MaskBits -DefaultGateway $Gateway
     # Configure the DNS client server IP addresses
     $mainInterface | Set-DnsClientServerAddress -ServerAddresses $Dns
 }
