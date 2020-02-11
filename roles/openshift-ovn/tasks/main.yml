@@ -51,7 +51,7 @@
 
 - name: Copy scripts
   copy:
-    src: /root/ovn-kubernetes/dist/scripts/{{ item }}
+    src: /root/ovn-kubernetes/dist/ansible/scripts/{{ item }}
     dest: /root/ovn/scripts/{{ item }}
     remote_src: yes
   loop:
