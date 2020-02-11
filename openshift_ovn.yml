@@ -1,20 +1,27 @@
-- hosts: masters[0]
+- hosts: nodes
   become: yes
   tasks:
-    - debug:
-        msg: "skipping for now"
-#  roles:
-#    - openshift-ovn
+    - name: create clean up file for ovn
+      copy:
+        dest: /usr/lib/tmpfiles.d/cleanup-ovn-cni.conf
+        content: |
+          r /etc/cni/net.d/10-ovn-kubernetes.conf
+          r /etc/origin/openvswitch/conf.db
 
-#- hosts: nodes
-#  become: yes
-#  tasks:
-#    - name: open ports for dnsmasq
-#      firewalld:
-#        zone: public
-#        port: '53/{{ item }}'
-#        permanent: yes
-#        state: enabled
-#      loop:
-#        - tcp
-#        - udp
+- hosts: masters[0]
+  become: yes
+  roles:
+    - openshift-ovn
+
+- hosts: nodes
+  become: yes
+  tasks:
+    - name: open ports for dnsmasq
+      firewalld:
+        zone: public
+        port: '53/{{ item }}'
+        permanent: yes
+        state: enabled
+      loop:
+        - tcp
+        - udp
