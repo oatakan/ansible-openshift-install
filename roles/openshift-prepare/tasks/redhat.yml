@@ -25,6 +25,13 @@
     validate: visudo -cf %s
     backup: no
 
+# see https://access.redhat.com/solutions/4737251
+- name: downgrade setuptools to prevent warning
+  pip:
+    name: setuptools==44
+    executable: pip2
+    state: forcereinstall
+
 - name: install epel
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
