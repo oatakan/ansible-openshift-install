@@ -11,7 +11,7 @@
 - hosts: masters[0]
   become: yes
   roles:
-    - openshift-ovn
+    - openshift-ovn-alt
 
 - hosts: nodes
   become: yes
