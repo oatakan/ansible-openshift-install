@@ -79,3 +79,10 @@
       when:
         - os_firewall_use_firewalld is not defined
         - not os_firewall_use_firewalld
+
+    # see https://access.redhat.com/solutions/4737251
+    - name: downgrade setuptools to prevent warning
+      pip:
+        name: setuptools==44
+        executable: pip2
+        state: forcereinstall
