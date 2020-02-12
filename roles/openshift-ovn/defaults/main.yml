@@ -18,5 +18,5 @@ ovn_gateway_mode: local
 ovn_gateway_opts: ""
 mtu_value: "1400"
 
-net_cidr: 10.128.0.0/14/23
+net_cidr: 10.128.0.0/14
 svc_cidr: 172.30.0.0/16
