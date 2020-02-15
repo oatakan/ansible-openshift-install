@@ -25,7 +25,7 @@ spec:
         name: ovnkube-node
         component: network
         type: infra
-        kubernetes.io/os: "linux"
+        beta.kubernetes.io/os: "linux"
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
@@ -256,7 +256,7 @@ spec:
               command: ["/root/ovnkube.sh", "cleanup-ovn-node"]
 
       nodeSelector:
-        kubernetes.io/os: "linux"
+        beta.kubernetes.io/os: "linux"
       volumes:
       - name: host-modules
         hostPath:
