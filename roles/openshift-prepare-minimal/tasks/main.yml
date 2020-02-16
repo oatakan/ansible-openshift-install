@@ -16,16 +16,11 @@
 
 - name: install packages
   yum:
-    name: "{{ item }}"
+    name: NetworkManager
     state: latest
-  with_items:
-  - NetworkManager
-  ignore_errors: true
 
 - name: enable and start services
   service:
-    name: "{{ item }}"
+    name: NetworkManager
     enabled: yes
     state: started
-  with_items:
-  - NetworkManager
