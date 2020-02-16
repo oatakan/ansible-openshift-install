@@ -2,7 +2,7 @@
 # daemonset version 3
 # starts master daemons, each in a separate container
 # it is run on the master node(s)
-kind: Deployment
+kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   name: ovnkube-master
@@ -29,6 +29,7 @@ spec:
         name: ovnkube-master
         component: network
         type: infra
+        openshift.io/component: network
         beta.kubernetes.io/os: "linux"
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
@@ -230,7 +231,7 @@ spec:
       # end of container
 
       nodeSelector:
-        node-role.kubernetes.io/master: "true"
+        node-role.kubernetes.io/master: ""
         beta.kubernetes.io/os: "linux"
       volumes:
       # TODO: Need to check why we need this?
