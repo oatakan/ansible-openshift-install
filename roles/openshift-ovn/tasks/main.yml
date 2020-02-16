@@ -59,6 +59,21 @@
     - ovn-display
     - ovn-debug
 
+- name: copy ovn-daemonset image build files
+  copy:
+    src: "{{ item }}"
+    dest: /root/{{ item }}
+  loop:
+    - ovn-daemonset-image.yml
+    - ovn-daemonset-build.yml
+
+- name: create ovn-daemonset image build
+  shell: oc create -f /root/{{ item }}
+  ignore_errors: yes
+  loop:
+    - ovn-daemonset-image.yml
+    - ovn-daemonset-build.yml
+
 - name: Get the k8s_apiserver
   shell: grep server /etc/origin/node/node.kubeconfig | awk '{ print $2 }'
   register: k8s_apisvr

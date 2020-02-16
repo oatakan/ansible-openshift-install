@@ -11,6 +11,12 @@ metadata:
   annotations:
     kubernetes.io/description: |
       This daemonset launches the ovn-kubernetes networking components.
+    image.openshift.io/triggers: |
+      [
+        {"from":{"kind":"ImageStreamTag","name":"ovn-daemonset:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"ovn-northd\")].image"},
+        {"from":{"kind":"ImageStreamTag","name":"ovn-daemonset:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"nbctl-daemon\")].image"},
+        {"from":{"kind":"ImageStreamTag","name":"ovn-daemonset:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"ovnkube-master\")].image"}
+      ]
 spec:
   #progressDeadlineSeconds: 600
   #replicas: 1
@@ -45,7 +51,8 @@ spec:
 
       # ovn-northd - v3
       - name: ovn-northd
-        image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        #image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        image: " "
         imagePullPolicy: "{{ ovn_image_pull_policy | default('IfNotPresent') }}"
 
         command: ["/root/ovnkube.sh", "run-ovn-northd"]
@@ -116,7 +123,8 @@ spec:
       # end of container
 
       - name: nbctl-daemon
-        image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        #image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        image: " "
         imagePullPolicy: "{{ ovn_image_pull_policy | default('IfNotPresent') }}"
 
         command: ["/root/ovnkube.sh", "run-nbctld"]
@@ -161,7 +169,8 @@ spec:
         lifecycle:
 
       - name: ovnkube-master
-        image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        #image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        image: " "
         imagePullPolicy: "{{ ovn_image_pull_policy | default('IfNotPresent') }}"
 
         command: ["/root/ovnkube.sh", "ovn-master"]

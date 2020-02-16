@@ -12,6 +12,12 @@ metadata:
   annotations:
     kubernetes.io/description: |
       This daemonset launches the ovn-kubernetes networking components.
+    image.openshift.io/triggers: |
+      [
+        {"from":{"kind":"ImageStreamTag","name":"ovn-daemonset:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"ovs-daemons\")].image"},
+        {"from":{"kind":"ImageStreamTag","name":"ovn-daemonset:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"ovn-controller\")].image"},
+        {"from":{"kind":"ImageStreamTag","name":"ovn-daemonset:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"ovnkube-node\")].image"}
+      ]
 spec:
   selector:
     matchLabels:
@@ -38,7 +44,8 @@ spec:
 
       # ovsdb-server and ovs-switchd daemons
       - name: ovs-daemons
-        image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        #image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        image: " "
         imagePullPolicy: "{{ ovn_image_pull_policy | default('IfNotPresent') }}"
 
         command: ["/root/ovnkube.sh", "ovs-server"]
@@ -90,7 +97,8 @@ spec:
               command: ["/root/ovnkube.sh", "cleanup-ovs-server"]
 
       - name: ovn-controller
-        image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        #image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        image: " "
         imagePullPolicy: "{{ ovn_image_pull_policy | default('IfNotPresent') }}"
 
         command: ["/root/ovnkube.sh", "ovn-controller"]
@@ -160,7 +168,8 @@ spec:
         lifecycle:
 
       - name: ovnkube-node
-        image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        #image: "{{ ovn_image | default('docker.io/ovnkube/ovn-daemonset:latest') }}"
+        image: " "
         imagePullPolicy: "{{ ovn_image_pull_policy | default('IfNotPresent') }}"
 
         command: ["/root/ovnkube.sh", "ovn-node"]
