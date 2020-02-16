@@ -73,6 +73,7 @@
     dest: /root/ovn/yaml/{{ item }}
   loop:
     - ovn-setup.yaml
+    - ovnkube-db.yaml
     - ovnkube-master.yaml
     - ovnkube-node.yaml
 
@@ -90,6 +91,10 @@
 
 - name: Add adm policy priviliged ovn
   shell: oc adm policy add-scc-to-user privileged -n ovn-kubernetes -z ovn
+  ignore_errors: yes
+
+- name: Start the db daemonset
+  shell: oc create -f /root/ovn/yaml/ovnkube-db.yaml
   ignore_errors: yes
 
 - name: Start the node ovn daemonset on all nodes
