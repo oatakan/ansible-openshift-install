@@ -59,21 +59,6 @@
     - ovn-display
     - ovn-debug
 
-- name: copy ovn-daemonset image build files
-  copy:
-    src: "{{ item }}"
-    dest: /root/{{ item }}
-  loop:
-    - ovn-daemonset-image.yml
-    - ovn-daemonset-build.yml
-
-- name: create ovn-daemonset image build
-  shell: oc create -f /root/{{ item }}
-  ignore_errors: yes
-  loop:
-    - ovn-daemonset-image.yml
-    - ovn-daemonset-build.yml
-
 - name: Get the k8s_apiserver
   shell: grep server /etc/origin/node/node.kubeconfig | awk '{ print $2 }'
   register: k8s_apisvr
@@ -92,6 +77,14 @@
     - ovnkube-master.yaml
     - ovnkube-node.yaml
 
+- name: copy ovn-daemonset image build files
+  copy:
+    src: "{{ item }}"
+    dest: /root/{{ item }}
+  loop:
+    - ovn-daemonset-image.yml
+    - ovn-daemonset-build.yml
+
 - name: Provision the OVN Setup
   shell: oc create -f /root/ovn/yaml/ovn-setup.yaml
   ignore_errors: yes
@@ -107,6 +100,13 @@
 - name: Add adm policy priviliged ovn
   shell: oc adm policy add-scc-to-user privileged -n ovn-kubernetes -z ovn
   ignore_errors: yes
+
+- name: create ovn-daemonset image build
+  shell: oc create -f /root/{{ item }}
+  ignore_errors: yes
+  loop:
+    - ovn-daemonset-image.yml
+    - ovn-daemonset-build.yml
 
 - name: Start the db daemonset
   shell: oc create -f /root/ovn/yaml/ovnkube-db.yaml
