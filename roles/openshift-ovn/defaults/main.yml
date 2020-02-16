@@ -1,7 +1,8 @@
 ---
 
 # This is the community build (default)
-ovn_image: "docker.io/ovnkube/ovn-daemonset:latest"
+#ovn_image: "docker.io/ovnkube/ovn-daemonset:latest"
+ovn_image: "docker.io/sdndocker/ovn-daemonset:latest"
 # This is an official redhat build
 # ovn_image: "registry.access.redhat.com/openshift3/ose-ovn-kubernetes:v4.0"
 # This is an official (internal) redhat build

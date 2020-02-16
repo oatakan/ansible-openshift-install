@@ -1,8 +1,0 @@
-apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  name: ovn-daemonset
-  namespace: ovn-kubernetes
-  labels:
-    app: ovn-kubernetes
-spec: {}
