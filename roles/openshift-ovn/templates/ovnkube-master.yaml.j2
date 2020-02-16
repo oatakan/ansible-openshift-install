@@ -52,6 +52,7 @@ spec:
 
         securityContext:
           runAsUser: 0
+          privileged: true
           capabilities:
             add: ["SYS_NICE"]
 
@@ -123,6 +124,7 @@ spec:
 
         securityContext:
           runAsUser: 0
+          privileged: true
 
         volumeMounts:
         - mountPath: /var/log/openvswitch/
@@ -168,6 +170,7 @@ spec:
 
         securityContext:
           runAsUser: 0
+          privileged: true
 
         volumeMounts:
         # Run directories where we need to be able to access sockets
