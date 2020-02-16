@@ -15,7 +15,8 @@ ovn_image_pull_policy: IfNotPresent
 
 ovn_kube_master_log_level: 4
 
-ovn_gateway_mode: local
+ovn_gateway_mode: local706086
+
 ovn_gateway_opts: ""
 mtu_value: "1400"
 
