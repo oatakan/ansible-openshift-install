@@ -1,0 +1,121 @@
+---
+
+- name: wait for oc client to be available
+  wait_for:
+    path: /usr/bin/oc
+    timeout: 36000
+
+- name: wait for kubeconfig to be available
+  wait_for:
+    path: /root/.kube/config
+    timeout: 36000
+
+- name: wait for API response
+  shell: oc whoami | grep -m 1 "system:admin"
+  register: wait_for_api
+  until: wait_for_api is success
+  retries: 300
+  delay: 5
+
+- name: open ports for ovn
+  firewalld:
+    zone: public
+    port: '{{ item }}/tcp'
+    permanent: yes
+    state: enabled
+  loop:
+    - "6641"
+    - "6642"
+    - "6081"
+
+- name: Remove existing content
+  file:
+    name: "{{ item }}"
+    state: absent
+  loop:
+    - /var/lib/openvswitch/ovnnb_db.db
+    - /var/lib/openvswitch/ovnsb_db.db
+
+- name: Clone ovn-kubernetes
+  git:
+    repo: https://github.com/ovn-org/ovn-kubernetes.git
+    dest: /root/ovn-kubernetes
+
+- name: Ensure directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /root/ovn/yaml
+    - /root/ovn/scripts
+
+- name: Copy scripts
+  copy:
+    src: /root/ovn-kubernetes/dist/ansible/scripts/{{ item }}
+    dest: /root/ovn/scripts/{{ item }}
+    remote_src: yes
+  loop:
+    - ovn-logs
+    - ovn-display
+    - ovn-debug
+
+- name: Get the k8s_apiserver
+  shell: grep server /etc/origin/node/node.kubeconfig | awk '{ print $2 }'
+  register: k8s_apisvr
+
+- name: set k8s_apiserver variable
+  set_fact:
+    k8s_apiserver: "{{ k8s_apisvr }}"
+
+- name: Create yaml files
+  template:
+    src: "{{ item }}.j2"
+    dest: /root/ovn/yaml/{{ item }}
+  loop:
+    - ovn-setup.yaml
+    - ovnkube-db.yaml
+    - ovnkube-master.yaml
+    - ovnkube-node.yaml
+
+- name: Provision the OVN Setup
+  shell: oc create -f /root/ovn/yaml/ovn-setup.yaml
+  ignore_errors: yes
+
+- name: Add adm policy auyuid
+  shell: oc adm policy add-scc-to-user anyuid -n ovn-kubernetes -z ovn
+  ignore_errors: yes
+
+- name: Add adm policy priviliged default
+  shell: oc adm policy add-scc-to-user privileged -n ovn-kubernetes -z default
+  ignore_errors: yes
+
+- name: Add adm policy priviliged ovn
+  shell: oc adm policy add-scc-to-user privileged -n ovn-kubernetes -z ovn
+  ignore_errors: yes
+
+- name: Start the db daemonset
+  shell: oc create -f /root/ovn/yaml/ovnkube-db.yaml
+  ignore_errors: yes
+
+- name: Start the node ovn daemonset on all nodes
+  shell: oc create -f /root/ovn/yaml/ovnkube-node.yaml
+  ignore_errors: yes
+
+- name: Start the master ovn daemonset
+  shell: oc create -f /root/ovn/yaml/ovnkube-master.yaml
+  ignore_errors: yes
+
+- name: copy skydns files
+  copy:
+    src: "{{ item }}"
+    dest: /root/{{ item }}
+  loop:
+    - skydns-image.yml
+    - skydns.yml
+
+- name: create skynet image and ds
+  shell: oc create -f /root/{{ item }}
+  ignore_errors: yes
+  loop:
+    - skydns-image.yml
+    - skydns.yml
