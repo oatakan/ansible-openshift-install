@@ -2,7 +2,7 @@
 # daemonset version 3
 # starts master daemons, each in a separate container
 # it is run on the master node(s)
-kind: Deployment
+kind: DaemonSet
 apiVersion: apps/v1
 metadata:
   name: ovnkube-master
