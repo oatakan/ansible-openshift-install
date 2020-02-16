@@ -256,7 +256,7 @@ spec:
               command: ["/root/ovnkube.sh", "cleanup-ovn-node"]
 
       nodeSelector:
-        beta.kubernetes.io/os: "linux"
+        node-role.kubernetes.io/compute: "true"
       volumes:
       - name: host-modules
         hostPath:
