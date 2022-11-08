@@ -6,7 +6,7 @@
     var: domain_prefix
 
 - name: Get record for router ELB DNS Entry
-  route53:
+  community.aws.route53:
     command: get
     zone: "{{ hosted_zone_domain_name }}"
     record: "*.{{ subdomain | default(ec2_tag_app | lower) }}.{{ domain_prefix }}.{{ hosted_zone_domain_name }}"
@@ -16,7 +16,7 @@
   delegate_to: localhost
 
 - name: Create Router ELB DNS Entry if it doesn't exist
-  route53:
+  community.aws.route53:
     #state: present ## Added in Ansible 2.4 will remove need for when statement below
     command: create
     overwrite: yes
@@ -28,7 +28,7 @@
   delegate_to: localhost
 
 - name: Get record for router ELB DNS Entry
-  route53:
+  community.aws.route53:
     command: get
     zone: "{{ hosted_zone_domain_name }}"
     record: "{{ subdomain | default(ec2_tag_app | lower) }}.{{ domain_prefix }}.{{ hosted_zone_domain_name }}"
@@ -38,7 +38,7 @@
   delegate_to: localhost
 
 - name: Create Router ELB DNS Entry if it doesn't exist
-  route53:
+  community.aws.route53:
     #state: present ## Added in Ansible 2.4 will remove need for when statement below
     command: create
     overwrite: yes

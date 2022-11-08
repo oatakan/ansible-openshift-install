@@ -1,6 +1,10 @@
-image_names:
-  rhel7: "RHEL-7.7_HVM_GA*x86_64*"
-  rhel8: "RHEL-8.1.0_HVM_GA*x86_64*"
+---
+
+ec2_image_names:
+  rhel7: "RHEL-7.8_HVM_GA*x86_64*"
+  rhel8: "RHEL-8.6.0_HVM*x86_64*"
+  rhel9: "RHEL-9.0.0_HVM*x86_64*"
   centos7: "CentOS Linux 7 x86_64 HVM EBS ENA 1901_01*"
+  centos8: "CentOS 8.4*x86_64"
 ec2_region: us-east-1
-ec2_ami_name: rhel7
+

@@ -1,73 +1,47 @@
-- hosts: localhost
+
+- name: remove openshift instances
+  hosts: all
+  gather_facts: false
+  connection: local
+  vars:
+    ansible_ssh_password: ''
   become: no
+  vars_files:
+    - node-config/nodes-ec2.yml
   vars:
     osp_cluster_name: oscluster1
-  tasks:
-    - debug:
-        var: osp_cluster_name
 
-    - name: get ec2 instance information (<2.9)
-      ec2_instance_facts:
-        region: "{{ ec2_region }}"
-        filters:
-          vpc-id: "{{ ec2_vpc_id }}"
-          "tag:app": "{{ osp_cluster_name | default('oscluster1') }}"
-      register: ec2_instances
-      when: ansible_version.full is version('2.9', '<')
-
+  pre_tasks:
     - name: get ec2 instance information
-      ec2_instance_info:
+      amazon.aws.ec2_instance_info:
         region: "{{ ec2_region }}"
         filters:
           vpc-id: "{{ ec2_vpc_id }}"
           "tag:app": "{{ osp_cluster_name | default('oscluster1') }}"
       register: ec2_instances
-      when: ansible_version.full is version('2.9', '>=')
+      delegate_to: localhost
 
-    - name: terminate instances
-      ec2:
-        region: "{{ ec2_region }}"
-        state: "absent"
-        instance_ids: "{{ ec2_instances.instances | map(attribute='instance_id') | list }}"
-
-    - name: Get record for router ELB DNS Entry
-      route53:
+    - name: get record for router DNS entry
+      community.aws.route53:
         command: get
         zone: "{{ hosted_zone_domain_name }}"
         record: "*.{{ subdomain | default(ec2_instances.instances[0].tags.app | lower) }}.{{ ec2_name_prefix | lower }}.{{ hosted_zone_domain_name }}"
         type: A
       register: routerelbrec
       when: hosted_zone_domain_name is defined and ec2_name_prefix is defined
-      ignore_errors: yes
+      delegate_to: localhost
 
-    - name: Delete Router ELB DNS Entry if it exists
-      route53:
-        #state: present ## Added in Ansible 2.4 will remove need for when statement below
-        command: delete
+    - name: delete DNS entry if it exists
+      community.aws.route53:
+        state: absent
         zone: "{{ hosted_zone_domain_name }}"
         record: "*.{{ subdomain | default(ec2_instances.instances[0].tags.app | lower) }}.{{ ec2_name_prefix | lower }}.{{ hosted_zone_domain_name }}"
         type: A
-        value: "{{ ec2_instances.instances[0].public_ip_address }}"
-      when: routerelbrec.set is defined and "{} != routerelbrec.set"
-      ignore_errors: yes
-
-    - name: Get record for router ELB DNS Entry
-      route53:
-        command: get
-        zone: "{{ hosted_zone_domain_name }}"
-        record: "{{ subdomain | default(ec2_instances.instances[0].tags.app | lower) }}.{{ ec2_name_prefix | lower }}.{{ hosted_zone_domain_name }}"
-        type: A
-      register: routerelbrec2
-      when: hosted_zone_domain_name is defined and ec2_name_prefix is defined
-      ignore_errors: yes
-
-    - name: Delete Router ELB DNS Entry if it exists
-      route53:
-        #state: present ## Added in Ansible 2.4 will remove need for when statement below
-        command: delete
-        zone: "{{ hosted_zone_domain_name }}"
-        record: "{{ subdomain | default(ec2_instances.instances[0].tags.app | lower) }}.{{ ec2_name_prefix | lower }}.{{ hosted_zone_domain_name }}"
-        type: A
-        value: "{{ ec2_instances.instances[0].public_ip_address }}"
-      when: routerelbre2c.set is defined and "{} != routerelbrec2.set"
-      ignore_errors: yes
+        value: "{{ routerelbrec.set.value }}"
+      when: routerelbrec.set is defined and "{} != routerelbrec.set" and routerelbrec.set.record is defined
+      delegate_to: localhost
+  roles:
+    - role: ansible-role-ec2
+      role_action: deprovision
+      delegate_to: localhost
+      run_once: yes
