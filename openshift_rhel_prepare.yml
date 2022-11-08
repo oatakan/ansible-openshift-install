@@ -1,6 +1,12 @@
 - hosts: all:!new_nodes:!parking
   become: yes
   gather_facts: no
+  vars:
+    repo_channels:
+      - rhel-7-server-rpms
+      - rhel-7-server-rh-common-rpms
+      - rhel-7-server-extras-rpms
+#       - rhel-7-server-aus-optional-rpms
   pre_tasks:
     - name: gather facts
       setup:
